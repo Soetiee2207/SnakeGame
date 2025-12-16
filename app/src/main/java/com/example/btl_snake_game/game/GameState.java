@@ -1,4 +1,8 @@
 package com.example.btl_snake_game.game;
 
-public class GameState {
+public enum GameState {
+    MENU,
+    PLAYING,
+    PAUSED,
+    GAME_OVER
 }
