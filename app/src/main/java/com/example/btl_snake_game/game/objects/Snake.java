@@ -14,7 +14,12 @@ public class Snake {
     public Snake(int startX, int startY, int cellSize) {
         this.cellSize = cellSize;
         this.body = new ArrayList<>();
-        this.body.add(new Vector2D(startX, startY));
+
+        // Thêm 3 đốt mặc định: Đầu, Thân 1, Thân 2
+        this.body.add(new Vector2D(startX, startY)); // Đầu
+        this.body.add(new Vector2D(startX - cellSize, startY)); // Thân 1
+        this.body.add(new Vector2D(startX - 2 * cellSize, startY)); // Thân 2
+
         this.direction = new Vector2D(cellSize, 0); // Di chuyển sang phải
         this.nextDirection = direction;
         this.growing = false;
