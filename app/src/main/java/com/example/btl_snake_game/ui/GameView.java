@@ -2,7 +2,7 @@ package com.example.btl_snake_game.ui;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+//import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -84,15 +84,15 @@ public class GameView extends View {
     }
 
     // Phương thức để set hình ảnh từ bên ngoài
-    public void setSnakeHeadImage(Bitmap bitmap) {
-        this.snakeHeadBitmap = bitmap;
-        updateImageMode();
-    }
+//    public void setSnakeHeadImage(Bitmap bitmap) {
+//        this.snakeHeadBitmap = bitmap;
+//        updateImageMode();
+//    }
 
-    public void setSnakeBodyImage(Bitmap bitmap) {
-        this.snakeBodyBitmap = bitmap;
-        updateImageMode();
-    }
+//    public void setSnakeBodyImage(Bitmap bitmap) {
+//        this.snakeBodyBitmap = bitmap;
+//        updateImageMode();
+//    }
 
     public void setFoodImage(Bitmap bitmap) {
         this.foodBitmap = bitmap;
@@ -143,21 +143,18 @@ public class GameView extends View {
         Vector2D foodPos = gameEngine.getFood().getPosition();
         int cellSize = gameEngine.getCellSize();
 
-        if (useImages && foodBitmap != null) {
-            // Vẽ bằng hình ảnh
-            Rect destRect = new Rect(
-                    foodPos.getX(),
-                    foodPos.getY(),
-                    foodPos.getX() + cellSize,
-                    foodPos.getY() + cellSize
-            );
-            canvas.drawBitmap(foodBitmap, null, destRect, null);
+        // Lấy Bitmap từ AssetManager static
+        Bitmap foodBmp = com.example.btl_snake_game.util.AssetManager.food; //
+
+        if (foodBmp != null) {
+            Rect destRect = new Rect(foodPos.getX(), foodPos.getY(),
+                    foodPos.getX() + cellSize, foodPos.getY() + cellSize);
+            canvas.drawBitmap(foodBmp, null, destRect, null);
         } else {
-            // Vẽ hình tròn thay vì hình vuông (đẹp hơn)
+            // Vẽ hình tròn mặc định nếu không có ảnh
             float centerX = foodPos.getX() + cellSize / 2f;
             float centerY = foodPos.getY() + cellSize / 2f;
-            float radius = cellSize / 2f - 2;
-            canvas.drawCircle(centerX, centerY, radius, foodPaint);
+            canvas.drawCircle(centerX, centerY, cellSize / 2f - 2, foodPaint);
         }
     }
 
@@ -167,33 +164,18 @@ public class GameView extends View {
 
         for (int i = 0; i < body.size(); i++) {
             Vector2D segment = body.get(i);
+            Bitmap bmp = (i == 0) ? com.example.btl_snake_game.util.AssetManager.snakeHead
+                    : com.example.btl_snake_game.util.AssetManager.snakeBody; //
 
-            if (useImages) {
-                // Vẽ bằng hình ảnh
-                Bitmap bitmap = (i == 0) ? snakeHeadBitmap : snakeBodyBitmap;
-                if (bitmap != null) {
-                    Rect destRect = new Rect(
-                            segment.getX(),
-                            segment.getY(),
-                            segment.getX() + cellSize,
-                            segment.getY() + cellSize
-                    );
-                    canvas.drawBitmap(bitmap, null, destRect, null);
-                }
+            if (bmp != null) {
+                Rect destRect = new Rect(segment.getX(), segment.getY(),
+                        segment.getX() + cellSize, segment.getY() + cellSize);
+                canvas.drawBitmap(bmp, null, destRect, null);
             } else {
-                // Vẽ hình tròn với hiệu ứng gradient (đẹp hơn hình vuông)
-                float centerX = segment.getX() + cellSize / 2f;
-                float centerY = segment.getY() + cellSize / 2f;
-                float radius = cellSize / 2f - 2;
-
-                // Đầu rắn màu xanh đậm hơn
-                if (i == 0) {
-                    snakePaint.setColor(Color.rgb(0, 200, 0));
-                } else {
-                    snakePaint.setColor(Color.rgb(0, 150, 0));
-                }
-
-                canvas.drawCircle(centerX, centerY, radius, snakePaint);
+                // Vẽ hình tròn mặc định
+                snakePaint.setColor((i == 0) ? Color.rgb(0, 200, 0) : Color.rgb(0, 150, 0));
+                canvas.drawCircle(segment.getX() + cellSize / 2f, segment.getY() + cellSize / 2f,
+                        cellSize / 2f - 2, snakePaint);
             }
         }
     }
