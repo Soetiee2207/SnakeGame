@@ -157,25 +157,60 @@ public class GameView extends View {
             canvas.drawCircle(centerX, centerY, cellSize / 2f - 2, foodPaint);
         }
     }
+    private void drawRotatedHead(Canvas canvas, Bitmap bitmap, Vector2D position, Vector2D dir, int cellSize) {
+        float angle = 0;
 
+        // Tính toán góc xoay dựa trên Vector2D direction
+        // Giả định ảnh gốc của huynh đang nhìn sang PHẢI (Right)
+        if (dir.getX() > 0) angle = 0;          // Sang phải
+        else if (dir.getX() < 0) angle = 180;   // Sang trái
+        else if (dir.getY() > 0) angle = 90;    // Đi xuống
+        else if (dir.getY() < 0) angle = 270;   // Đi lên
+
+        canvas.save(); // Lưu trạng thái canvas trước khi xoay
+
+        // Chuyển tâm xoay về giữa ô của đầu rắn
+        float centerX = position.getX() + cellSize / 2f;
+        float centerY = position.getY() + cellSize / 2f;
+        canvas.rotate(angle, centerX, centerY);
+
+        // Vẽ đầu rắn đã xoay
+        Rect destRect = new Rect(position.getX(), position.getY(),
+                position.getX() + cellSize, position.getY() + cellSize);
+        canvas.drawBitmap(bitmap, null, destRect, null);
+
+        canvas.restore(); // Khôi phục lại trạng thái canvas gốc
+    }
     private void drawSnake(Canvas canvas) {
         List<Vector2D> body = gameEngine.getSnake().getBody();
         int cellSize = gameEngine.getCellSize();
+        // Lấy hướng hiện tại từ Snake để biết đường mà xoay đầu
+        Vector2D currentDir = gameEngine.getSnake().getDirection();
 
         for (int i = 0; i < body.size(); i++) {
             Vector2D segment = body.get(i);
-            Bitmap bmp = (i == 0) ? com.example.btl_snake_game.util.AssetManager.snakeHead
-                    : com.example.btl_snake_game.util.AssetManager.snakeBody; //
 
-            if (bmp != null) {
-                Rect destRect = new Rect(segment.getX(), segment.getY(),
-                        segment.getX() + cellSize, segment.getY() + cellSize);
-                canvas.drawBitmap(bmp, null, destRect, null);
-            } else {
-                // Vẽ hình tròn mặc định
-                snakePaint.setColor((i == 0) ? Color.rgb(0, 200, 0) : Color.rgb(0, 150, 0));
-                canvas.drawCircle(segment.getX() + cellSize / 2f, segment.getY() + cellSize / 2f,
-                        cellSize / 2f - 2, snakePaint);
+            if (i == 0) { // Xử lý riêng cho cái ĐẦU
+                Bitmap headBmp = com.example.btl_snake_game.util.AssetManager.snakeHead;
+                if (headBmp != null) {
+                    drawRotatedHead(canvas, headBmp, segment, currentDir, cellSize);
+                } else {
+                    // Vẽ hình tròn mặc định nếu chưa load được ảnh
+                    snakePaint.setColor(Color.rgb(0, 200, 0));
+                    canvas.drawCircle(segment.getX() + cellSize / 2f, segment.getY() + cellSize / 2f,
+                            cellSize / 2f - 2, snakePaint);
+                }
+            } else { // Vẽ THÂN như bình thường
+                Bitmap bodyBmp = com.example.btl_snake_game.util.AssetManager.snakeBody;
+                if (bodyBmp != null) {
+                    Rect destRect = new Rect(segment.getX(), segment.getY(),
+                            segment.getX() + cellSize, segment.getY() + cellSize);
+                    canvas.drawBitmap(bodyBmp, null, destRect, null);
+                } else {
+                    snakePaint.setColor(Color.rgb(0, 150, 0));
+                    canvas.drawCircle(segment.getX() + cellSize / 2f, segment.getY() + cellSize / 2f,
+                            cellSize / 2f - 2, snakePaint);
+                }
             }
         }
     }
