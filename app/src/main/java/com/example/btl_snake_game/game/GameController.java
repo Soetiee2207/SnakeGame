@@ -14,7 +14,7 @@ public class GameController {
     private GameEngine gameEngine;
     private GameThread gameThread;
     private GestureDetector gestureDetector;
-    private static final int CELL_SIZE = 50;
+    private static final int CELL_SIZE = 70;
 
     public void init(Context context, GameView gameView) {
         // 1. Khởi tạo Managers
