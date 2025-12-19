@@ -10,6 +10,7 @@ import com.example.btl_snake_game.game.GameEngine;
 import com.example.btl_snake_game.ui.GameThread;
 import com.example.btl_snake_game.ui.GameView;
 import com.example.btl_snake_game.ui.InputHandler;
+import com.example.btl_snake_game.util.AssetManager;
 import com.example.btl_snake_game.util.SettingManager;
 
 public class MainActivity extends AppCompatActivity {
@@ -23,7 +24,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Khởi tạo đúng với Constructor nhận Context
+        com.example.btl_snake_game.util.AssetManager assetLoader = new com.example.btl_snake_game.util.AssetManager(this);
 
+        // Gọi ĐÚNG tên hàm huynh đã viết trong lớp AssetManager
+        assetLoader.loadAllAssets();
         // Ẩn thanh trạng thái và navigation bar
         getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_FULLSCREEN |
