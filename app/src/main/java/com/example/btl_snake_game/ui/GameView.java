@@ -114,9 +114,9 @@ public class GameView extends View {
         canvas.drawColor(Color.BLACK);
 
         // Vẽ lưới (có thể tắt nếu dùng hình ảnh)
-        if (!useImages) {
-            drawGrid(canvas);
-        }
+//        if (!useImages) {
+//            drawGrid(canvas);
+//        }
 
         // Vẽ thức ăn
         drawFood(canvas);
