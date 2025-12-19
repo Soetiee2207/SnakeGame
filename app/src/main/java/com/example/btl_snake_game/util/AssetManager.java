@@ -20,15 +20,12 @@ public class AssetManager {
 
     // Hàm load ảnh từ thư mục assets/images/
     private Bitmap loadBitmap(String fileName) {
-        InputStream is = new InputStream() {
-            @Override
-            public int read() throws IOException {
-                return 0;
-            }
-        };
         try {
-            is = context.getAssets().open("images/" + fileName);
-            return BitmapFactory.decodeStream(is);
+            // Xóa dòng InputStream is = new InputStream() {...} cũ đi
+            InputStream is = context.getAssets().open("images/" + fileName);
+            Bitmap bitmap = BitmapFactory.decodeStream(is);
+            is.close(); // Nhớ đóng stream sau khi đọc xong
+            return bitmap;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -40,6 +37,6 @@ public class AssetManager {
         // Designer B cứ thế mà xuất file đúng tên là được.
         snakeHead = loadBitmap("snake_head.png");
         snakeBody = loadBitmap("snake_body.png");
-        food = loadBitmap("apple.png");
+        food = loadBitmap("food.png");
     }
 }
