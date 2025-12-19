@@ -79,4 +79,5 @@ public class Snake {
     public int getLength() {
         return body.size();
     }
+    public Vector2D getDirection() { return direction; }
 }
