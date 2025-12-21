@@ -1,3 +1,27 @@
 <resources>
     <string name="app_name">BTL_Snake_Game</string>
+    
+    <!-- Menu Activity -->
+    <string name="app_logo">App Logo</string>
+    <string name="game_title">SNAKE GAME</string>
+    <string name="high_score_default">High Score: 0</string>
+    <string name="high_score_format">High Score: %1$d</string>
+    <string name="btn_play">PLAY</string>
+    <string name="btn_settings">SETTINGS</string>
+    <string name="btn_exit">EXIT</string>
+    
+    <!-- Game Activity -->
+    <string name="score_default">Score: 0</string>
+    <string name="score_format">Score: %1$d</string>
+    <string name="btn_pause">Pause</string>
+    <string name="btn_sound">Sound</string>
+    
+    <!-- Settings Activity -->
+    <string name="settings_title">SETTINGS</string>
+    <string name="difficulty_label">Difficulty</string>
+    <string name="difficulty_easy">Easy</string>
+    <string name="difficulty_easy_desc">Slow speed, can pass through walls</string>
+    <string name="difficulty_hard">Hard</string>
+    <string name="difficulty_hard_desc">Fast speed, die on wall collision</string>
+    <string name="btn_back">BACK</string>
 </resources>

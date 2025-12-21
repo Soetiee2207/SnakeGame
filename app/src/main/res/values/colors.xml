@@ -2,4 +2,15 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    
+    <!-- Game Theme Colors -->
+    <color name="background_dark">#1A1A2E</color>
+    <color name="text_light">#FFFFFF</color>
+    <color name="text_dark">#1A1A2E</color>
+    <color name="text_secondary">#A0A0A0</color>
+    
+    <!-- Primary Colors -->
+    <color name="primary_green">#4CAF50</color>
+    <color name="secondary_blue">#2196F3</color>
+    <color name="accent_red">#FF5252</color>
 </resources>
