@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="game_ui_bar_height">100dp</dimen>
+    <dimen name="game_score_text_size">45sp</dimen>
+    <dimen name="game_score_margin_left">20dp</dimen>
+    <dimen name="game_score_y">60dp</dimen>
+    
+    <dimen name="game_ui_button_size">70dp</dimen>
+    <dimen name="game_ui_button_margin">15dp</dimen>
+    <dimen name="game_ui_button_margin_right">20dp</dimen>
+    <dimen name="game_ui_button_corner_radius">10dp</dimen>
+    <dimen name="game_ui_icon_text_size">40sp</dimen>
+    <dimen name="game_ui_icon_text_offset_y">15dp</dimen>
+    
+    <dimen name="game_over_title_text_size">100sp</dimen>
+    <dimen name="game_over_score_text_size">60sp</dimen>
+    <dimen name="game_over_tap_text_size">45sp</dimen>
+    
+    <dimen name="game_paused_title_text_size">100sp</dimen>
+    <dimen name="game_paused_tap_text_size">50sp</dimen>
+</resources>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="settings_title_text_size">80sp</dimen>
+    <dimen name="settings_section_text_size">45sp</dimen>
+    <dimen name="settings_description_text_size">35sp</dimen>
+    <dimen name="settings_button_text_size">45sp</dimen>
+    <dimen name="settings_back_button_text_size">50sp</dimen>
+    
+    <dimen name="settings_title_y">120dp</dimen>
+    <dimen name="settings_difficulty_label_y">250dp</dimen>
+    <dimen name="settings_difficulty_button_y">280dp</dimen>
+    <dimen name="settings_difficulty_desc_y">400dp</dimen>
+    <dimen name="settings_difficulty_desc2_y">450dp</dimen>
+    <dimen name="settings_color_label_y">550dp</dimen>
+    <dimen name="settings_color_grid_y">580dp</dimen>
+    
+    <dimen name="settings_margin_left">100dp</dimen>
+    <dimen name="settings_button_width_ratio">0.35</dimen>
+    <dimen name="settings_button_height">80dp</dimen>
+    <dimen name="settings_button_corner_radius">15dp</dimen>
+    
+    <dimen name="settings_color_box_size">80dp</dimen>
+    <dimen name="settings_color_spacing">20dp</dimen>
+    <dimen name="settings_color_border_width">5dp</dimen>
+    <dimen name="settings_color_corner_radius">10dp</dimen>
+    
+    <dimen name="settings_back_button_width">300dp</dimen>
+    <dimen name="settings_back_button_height">100dp</dimen>
+    <dimen name="settings_back_button_bottom_margin">180dp</dimen>
+    <dimen name="settings_back_button_corner_radius">20dp</dimen>
+    <dimen name="settings_back_button_text_offset_y">18dp</dimen>
+</resources>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="menu_title_text_size">120sp</dimen>
+    <dimen name="menu_high_score_text_size">50sp</dimen>
+    <dimen name="menu_button_text_size">60sp</dimen>
+    
+    <dimen name="menu_title_position_y">0.25</dimen>
+    <dimen name="menu_high_score_position_y">0.35</dimen>
+    <dimen name="menu_play_button_position_y">0.45</dimen>
+    <dimen name="menu_settings_button_position_y">0.58</dimen>
+    <dimen name="menu_exit_button_position_y">0.71</dimen>
+    
+    <dimen name="menu_button_width_ratio">0.6</dimen>
+    <dimen name="menu_button_height">100dp</dimen>
+    <dimen name="menu_button_corner_radius">20dp</dimen>
+    <dimen name="menu_button_text_offset_y">20dp</dimen>
+</resources>
