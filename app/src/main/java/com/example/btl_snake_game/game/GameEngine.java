@@ -3,6 +3,7 @@ package com.example.btl_snake_game.game;
 import com.example.btl_snake_game.game.objects.Food;
 import com.example.btl_snake_game.game.objects.Snake;
 import com.example.btl_snake_game.util.SettingManager;
+import com.example.btl_snake_game.util.SoundManager;
 import com.example.btl_snake_game.util.Vector2D;
 
 public class GameEngine {
@@ -39,23 +40,58 @@ public class GameEngine {
 
         snake.move();
 
-        // Kiểm tra ăn thức ăn
+        boolean isHardMode = settingManager.isHardMode();
+        
+        if (isHardMode) {
+            if (snake.checkWallCollision(gridWidth, gridHeight)) {
+                state = GameState.GAME_OVER;
+                SoundManager.getInstance().playDieSound();
+                saveHighScore();
+                return;
+            }
+        } else {
+            wrapSnakePosition();
+        }
+
         if (food.isEaten(snake.getHead())) {
             snake.grow();
             score += 10;
+            SoundManager.getInstance().playEatSound();
             food.spawn();
-            // Đảm bảo thức ăn không spawn trên thân rắn
             while (isOnSnake(food.getPosition())) {
                 food.spawn();
             }
         }
 
-        // Kiểm tra va chạm
-        if (snake.checkWallCollision(gridWidth, gridHeight) ||
-                snake.checkSelfCollision()) {
+        if (snake.checkSelfCollision()) {
             state = GameState.GAME_OVER;
+            SoundManager.getInstance().playDieSound();
             saveHighScore();
         }
+    }
+
+    private void wrapSnakePosition() {
+        Vector2D head = snake.getHead();
+        int maxX = gridWidth * cellSize;
+        int maxY = gridHeight * cellSize;
+
+        int newX = head.getX();
+        int newY = head.getY();
+
+        if (head.getX() < 0) {
+            newX = maxX - cellSize;
+        } else if (head.getX() >= maxX) {
+            newX = 0;
+        }
+
+        if (head.getY() < 0) {
+            newY = maxY - cellSize;
+        } else if (head.getY() >= maxY) {
+            newY = 0;
+        }
+
+        head.setX(newX);
+        head.setY(newY);
     }
 
     private boolean isOnSnake(Vector2D position) {
@@ -82,9 +118,17 @@ public class GameEngine {
     }
 
     public void startGame() {
-        if (state == GameState.MENU || state == GameState.GAME_OVER) {
+        if (state == GameState.MENU) {
+            state = GameState.PLAYING;
+        } else if (state == GameState.GAME_OVER) {
             initGame();
             state = GameState.PLAYING;
+        }
+    }
+
+    public void resumeToMenu() {
+        if (state == GameState.PLAYING || state == GameState.PAUSED) {
+            state = GameState.MENU;
         }
     }
 
@@ -95,7 +139,6 @@ public class GameEngine {
         }
     }
 
-    // Getters
     public Snake getSnake() {
         return snake;
     }

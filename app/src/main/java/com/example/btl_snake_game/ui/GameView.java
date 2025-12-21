@@ -2,12 +2,13 @@ package com.example.btl_snake_game.ui;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-//import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 import com.example.btl_snake_game.game.GameEngine;
 import com.example.btl_snake_game.game.GameState;
@@ -21,13 +22,24 @@ public class GameView extends View {
     private Paint textPaint;
     private Paint gridPaint;
 
-    // Bitmap cho snake và food
     private Bitmap snakeHeadBitmap;
     private Bitmap snakeBodyBitmap;
     private Bitmap foodBitmap;
 
-    // Flag để chọn mode vẽ
     private boolean useImages = false;
+    
+    // Pause popup
+    private boolean isPaused = false;
+    private Paint buttonPaint;
+    private Paint buttonTextPaint;
+    private RectF continueButtonRect;
+    private RectF menuButtonRect;
+    private OnPauseActionListener pauseActionListener;
+
+    // Game Over popup
+    private RectF restartButtonRect;
+    private RectF gameOverMenuButtonRect;
+    private OnGameOverActionListener gameOverActionListener;
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -50,13 +62,17 @@ public class GameView extends View {
         textPaint.setTextSize(60);
         textPaint.setTextAlign(Paint.Align.CENTER);
         textPaint.setAntiAlias(true);
+        
+        // Apply game font if available
+        if (com.example.btl_snake_game.util.AssetManager.gameFont != null) {
+            textPaint.setTypeface(com.example.btl_snake_game.util.AssetManager.gameFont);
+        }
 
         gridPaint = new Paint();
         gridPaint.setColor(Color.DKGRAY);
         gridPaint.setStyle(Paint.Style.STROKE);
         gridPaint.setStrokeWidth(1);
 
-        // Thử load hình ảnh (nếu có)
         loadImages(context);
     }
 
@@ -111,22 +127,14 @@ public class GameView extends View {
             return;
         }
 
-        canvas.drawColor(Color.BLACK);
-
-        // Vẽ lưới (có thể tắt nếu dùng hình ảnh)
-//        if (!useImages) {
-//            drawGrid(canvas);
-//        }
+        // Vẽ game background (sân cỏ)
+        drawBackground(canvas);
 
         // Vẽ thức ăn
         drawFood(canvas);
 
         // Vẽ rắn
         drawSnake(canvas);
-
-        // Vẽ điểm số
-        canvas.drawText("Score: " + gameEngine.getScore(),
-                getWidth() / 2, 80, textPaint);
 
         // Vẽ màn hình game over
         if (gameEngine.getState() == GameState.GAME_OVER) {
@@ -136,6 +144,161 @@ public class GameView extends View {
         // Vẽ màn hình menu
         if (gameEngine.getState() == GameState.MENU) {
             drawMenu(canvas);
+        }
+
+        // Vẽ pause popup
+        if (isPaused) {
+            drawPausePopup(canvas);
+        }
+    }
+
+    public interface OnPauseActionListener {
+        void onContinue();
+        void onReturnToMenu();
+    }
+
+    public void setOnPauseActionListener(OnPauseActionListener listener) {
+        this.pauseActionListener = listener;
+    }
+
+    public void setPaused(boolean paused) {
+        this.isPaused = paused;
+        postInvalidate();
+    }
+
+    public boolean isPaused() {
+        return isPaused;
+    }
+
+    private void drawPausePopup(Canvas canvas) {
+        // Vẽ overlay tối
+        Paint overlayPaint = new Paint();
+        overlayPaint.setColor(Color.argb(180, 0, 0, 0));
+        canvas.drawRect(0, 0, getWidth(), getHeight(), overlayPaint);
+
+        // Vẽ popup box
+        float popupWidth = getWidth() * 0.7f;
+        float popupHeight = getHeight() * 0.4f;
+        float popupLeft = (getWidth() - popupWidth) / 2;
+        float popupTop = (getHeight() - popupHeight) / 2;
+        RectF popupRect = new RectF(popupLeft, popupTop, popupLeft + popupWidth, popupTop + popupHeight);
+        
+        Paint popupPaint = new Paint();
+        popupPaint.setColor(Color.rgb(30, 30, 60));
+        popupPaint.setAntiAlias(true);
+        canvas.drawRoundRect(popupRect, 30, 30, popupPaint);
+
+        // Vẽ viền
+        Paint borderPaint = new Paint();
+        borderPaint.setColor(Color.rgb(76, 175, 80));
+        borderPaint.setStyle(Paint.Style.STROKE);
+        borderPaint.setStrokeWidth(5);
+        borderPaint.setAntiAlias(true);
+        canvas.drawRoundRect(popupRect, 30, 30, borderPaint);
+
+        // Vẽ title "PAUSED"
+        textPaint.setTextSize(60);
+        textPaint.setColor(Color.WHITE);
+        canvas.drawText("PAUSED", getWidth() / 2, popupTop + 80, textPaint);
+
+        // Vẽ nút Continue
+        float buttonWidth = popupWidth * 0.6f;
+        float buttonHeight = 80;
+        float buttonLeft = (getWidth() - buttonWidth) / 2;
+        float continueTop = popupTop + 130;
+        continueButtonRect = new RectF(buttonLeft, continueTop, buttonLeft + buttonWidth, continueTop + buttonHeight);
+        
+        buttonPaint = new Paint();
+        buttonPaint.setColor(Color.rgb(76, 175, 80));
+        buttonPaint.setAntiAlias(true);
+        canvas.drawRoundRect(continueButtonRect, 15, 15, buttonPaint);
+
+        buttonTextPaint = new Paint();
+        buttonTextPaint.setColor(Color.WHITE);
+        buttonTextPaint.setTextSize(40);
+        buttonTextPaint.setTextAlign(Paint.Align.CENTER);
+        buttonTextPaint.setAntiAlias(true);
+        if (com.example.btl_snake_game.util.AssetManager.gameFont != null) {
+            buttonTextPaint.setTypeface(com.example.btl_snake_game.util.AssetManager.gameFont);
+        }
+        canvas.drawText("RESUME", getWidth() / 2, continueTop + 52, buttonTextPaint);
+
+        // Vẽ nút Menu
+        float menuTop = continueTop + buttonHeight + 30;
+        menuButtonRect = new RectF(buttonLeft, menuTop, buttonLeft + buttonWidth, menuTop + buttonHeight);
+        
+        buttonPaint.setColor(Color.rgb(255, 82, 82));
+        canvas.drawRoundRect(menuButtonRect, 15, 15, buttonPaint);
+        canvas.drawText("MENU", getWidth() / 2, menuTop + 52, buttonTextPaint);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        // Handle pause popup
+        if (isPaused) {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                float x = event.getX();
+                float y = event.getY();
+
+                if (continueButtonRect != null && continueButtonRect.contains(x, y)) {
+                    if (pauseActionListener != null) {
+                        pauseActionListener.onContinue();
+                    }
+                    return true;
+                }
+
+                if (menuButtonRect != null && menuButtonRect.contains(x, y)) {
+                    if (pauseActionListener != null) {
+                        pauseActionListener.onReturnToMenu();
+                    }
+                    return true;
+                }
+            }
+            return true;
+        }
+
+        // Handle game over popup
+        if (gameEngine != null && gameEngine.getState() == GameState.GAME_OVER) {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                float x = event.getX();
+                float y = event.getY();
+
+                if (restartButtonRect != null && restartButtonRect.contains(x, y)) {
+                    if (gameOverActionListener != null) {
+                        gameOverActionListener.onRestart();
+                    }
+                    return true;
+                }
+
+                if (gameOverMenuButtonRect != null && gameOverMenuButtonRect.contains(x, y)) {
+                    if (gameOverActionListener != null) {
+                        gameOverActionListener.onReturnToMenu();
+                    }
+                    return true;
+                }
+            }
+            return true;
+        }
+
+        return super.onTouchEvent(event);
+    }
+
+    private void drawBackground(Canvas canvas) {
+        Bitmap bgBitmap = com.example.btl_snake_game.util.AssetManager.gameBackground;
+        
+        if (bgBitmap != null) {
+            // Tile background để phủ kín màn hình
+            int bgWidth = bgBitmap.getWidth();
+            int bgHeight = bgBitmap.getHeight();
+            
+            for (int x = 0; x < getWidth(); x += bgWidth) {
+                for (int y = 0; y < getHeight(); y += bgHeight) {
+                    canvas.drawBitmap(bgBitmap, x, y, null);
+                }
+            }
+        } else {
+            // Fallback: vẽ màu xanh lá đậm nếu không có hình
+            canvas.drawColor(Color.rgb(34, 139, 34)); // Forest Green
         }
     }
 
@@ -221,18 +384,79 @@ public class GameView extends View {
         overlayPaint.setColor(Color.argb(180, 0, 0, 0));
         canvas.drawRect(0, 0, getWidth(), getHeight(), overlayPaint);
 
-        textPaint.setTextSize(80);
-        canvas.drawText("GAME OVER", getWidth() / 2, getHeight() / 2 - 50, textPaint);
+        // Vẽ popup box
+        float popupWidth = getWidth() * 0.75f;
+        float popupHeight = getHeight() * 0.45f;
+        float popupLeft = (getWidth() - popupWidth) / 2;
+        float popupTop = (getHeight() - popupHeight) / 2;
+        RectF popupRect = new RectF(popupLeft, popupTop, popupLeft + popupWidth, popupTop + popupHeight);
+        
+        Paint popupPaint = new Paint();
+        popupPaint.setColor(Color.rgb(30, 30, 60));
+        popupPaint.setAntiAlias(true);
+        canvas.drawRoundRect(popupRect, 30, 30, popupPaint);
 
-        textPaint.setTextSize(50);
-        canvas.drawText("Score: " + gameEngine.getScore(),
-                getWidth() / 2, getHeight() / 2 + 50, textPaint);
+        // Vẽ viền đỏ
+        Paint borderPaint = new Paint();
+        borderPaint.setColor(Color.rgb(255, 82, 82));
+        borderPaint.setStyle(Paint.Style.STROKE);
+        borderPaint.setStrokeWidth(5);
+        borderPaint.setAntiAlias(true);
+        canvas.drawRoundRect(popupRect, 30, 30, borderPaint);
 
+        // Vẽ title "GAME OVER"
+        textPaint.setTextSize(60);
+        textPaint.setColor(Color.rgb(255, 82, 82));
+        canvas.drawText("GAME OVER", getWidth() / 2, popupTop + 70, textPaint);
+
+        // Vẽ Score
         textPaint.setTextSize(40);
-        canvas.drawText("Tap to Restart", getWidth() / 2,
-                getHeight() / 2 + 120, textPaint);
+        textPaint.setColor(Color.WHITE);
+        canvas.drawText("Score: " + gameEngine.getScore(), getWidth() / 2, popupTop + 130, textPaint);
+
+        // Vẽ nút Restart
+        float buttonWidth = popupWidth * 0.6f;
+        float buttonHeight = 80;
+        float buttonLeft = (getWidth() - buttonWidth) / 2;
+        float restartTop = popupTop + 170;
+        restartButtonRect = new RectF(buttonLeft, restartTop, buttonLeft + buttonWidth, restartTop + buttonHeight);
+        
+        if (buttonPaint == null) buttonPaint = new Paint();
+        buttonPaint.setColor(Color.rgb(76, 175, 80));
+        buttonPaint.setAntiAlias(true);
+        canvas.drawRoundRect(restartButtonRect, 15, 15, buttonPaint);
+
+        if (buttonTextPaint == null) {
+            buttonTextPaint = new Paint();
+            buttonTextPaint.setColor(Color.WHITE);
+            buttonTextPaint.setTextSize(40);
+            buttonTextPaint.setTextAlign(Paint.Align.CENTER);
+            buttonTextPaint.setAntiAlias(true);
+            if (com.example.btl_snake_game.util.AssetManager.gameFont != null) {
+                buttonTextPaint.setTypeface(com.example.btl_snake_game.util.AssetManager.gameFont);
+            }
+        }
+        canvas.drawText("RESTART", getWidth() / 2, restartTop + 52, buttonTextPaint);
+
+        // Vẽ nút Menu
+        float menuTop = restartTop + buttonHeight + 25;
+        gameOverMenuButtonRect = new RectF(buttonLeft, menuTop, buttonLeft + buttonWidth, menuTop + buttonHeight);
+        
+        buttonPaint.setColor(Color.rgb(255, 82, 82));
+        canvas.drawRoundRect(gameOverMenuButtonRect, 15, 15, buttonPaint);
+        canvas.drawText("MENU", getWidth() / 2, menuTop + 52, buttonTextPaint);
 
         textPaint.setTextSize(60);
+        textPaint.setColor(Color.WHITE);
+    }
+
+    public interface OnGameOverActionListener {
+        void onRestart();
+        void onReturnToMenu();
+    }
+
+    public void setOnGameOverActionListener(OnGameOverActionListener listener) {
+        this.gameOverActionListener = listener;
     }
 
     private void drawMenu(Canvas canvas) {

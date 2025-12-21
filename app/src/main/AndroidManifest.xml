@@ -12,8 +12,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
+        
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MenuActivity"
             android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
@@ -21,6 +22,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
+        <activity
+            android:name=".ui.GameActivity"
+            android:screenOrientation="portrait"
+            android:exported="false" />
+            
+        <activity
+            android:name=".ui.SettingActivity"
+            android:screenOrientation="portrait"
+            android:exported="false" />
+            
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait"
+            android:exported="false" />
+            
     </application>
 
 </manifest>

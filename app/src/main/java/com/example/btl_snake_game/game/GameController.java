@@ -1,9 +1,8 @@
 package com.example.btl_snake_game.game;
 
 import android.content.Context;
-import android.util.DisplayMetrics;
 import android.view.GestureDetector;
-import android.view.WindowManager;
+import android.view.ViewTreeObserver;
 import com.example.btl_snake_game.ui.GameThread;
 import com.example.btl_snake_game.ui.GameView;
 import com.example.btl_snake_game.ui.InputHandler;
@@ -15,42 +14,76 @@ public class GameController {
     private GameThread gameThread;
     private GestureDetector gestureDetector;
     private static final int CELL_SIZE = 70;
+    private Context context;
+    private GameView gameView;
+    private boolean isInitialized = false;
+    private GameThread.ScoreUpdateListener scoreListener;
 
     public void init(Context context, GameView gameView) {
-        // 1. Khởi tạo Managers
+        this.context = context;
+        this.gameView = gameView;
+
         SettingManager.getInstance().init(context);
         AssetManager assetLoader = new AssetManager(context);
         assetLoader.loadAllAssets();
 
-        // 2. Tính toán lưới
-        DisplayMetrics dm = new DisplayMetrics();
-        ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(dm);
-        int gridWidth = dm.widthPixels / CELL_SIZE;
-        int gridHeight = dm.heightPixels / CELL_SIZE;
+        gameView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (!isInitialized && gameView.getWidth() > 0 && gameView.getHeight() > 0) {
+                    initGameWithViewSize();
+                    isInitialized = true;
+                    gameView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+            }
+        });
+    }
 
-        // 3. Khởi tạo Core Logic
+    private void initGameWithViewSize() {
+        int viewWidth = gameView.getWidth();
+        int viewHeight = gameView.getHeight();
+        int gridWidth = viewWidth / CELL_SIZE;
+        int gridHeight = viewHeight / CELL_SIZE;
+
         gameEngine = new GameEngine(gridWidth, gridHeight, CELL_SIZE);
         gameView.setGameEngine(gameEngine);
 
-        // 4. Khởi tạo Input & Thread
         InputHandler inputHandler = new InputHandler(gameEngine, CELL_SIZE);
         gestureDetector = new GestureDetector(context, inputHandler);
+        
         gameThread = new GameThread(gameEngine, gameView);
+        if (scoreListener != null) {
+            gameThread.setScoreUpdateListener(scoreListener);
+        }
+        gameThread.start();
+    }
+
+    public void setScoreUpdateListener(GameThread.ScoreUpdateListener listener) {
+        this.scoreListener = listener;
+        if (gameThread != null) {
+            gameThread.setScoreUpdateListener(listener);
+        }
     }
 
     public void start() {
         if (gameThread != null) {
             gameThread.setRunning(true);
-            if (!gameThread.isAlive()) gameThread.start();
         }
     }
 
     public void stop() {
         if (gameThread != null) {
             gameThread.setRunning(false);
-            try { gameThread.join(); } catch (InterruptedException e) { e.printStackTrace(); }
+        }
+    }
+
+    public void destroy() {
+        if (gameThread != null) {
+            gameThread.stopThread();
         }
     }
 
     public GestureDetector getGestureDetector() { return gestureDetector; }
+
+    public GameEngine getGameEngine() { return gameEngine; }
 }

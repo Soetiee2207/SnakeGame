@@ -25,7 +25,7 @@ public class InputHandler extends GestureDetector.SimpleOnGestureListener {
     @Override
     public boolean onSingleTapUp(MotionEvent e) {
         GameState state = gameEngine.getState();
-        if (state == GameState.MENU || state == GameState.GAME_OVER) {
+        if (state == GameState.MENU) {
             gameEngine.startGame();
             return true;
         }

@@ -9,6 +9,10 @@ public class SettingManager {
     private static final String PREF_NAME = "SnakeGamePrefs";
     private static final String HIGH_SCORE_KEY = "highScore";
     private static final String SOUND_ENABLED_KEY = "soundEnabled";
+    private static final String DIFFICULTY_KEY = "difficulty";
+
+    public static final int DIFFICULTY_EASY = 0;
+    public static final int DIFFICULTY_HARD = 1;
 
     private SettingManager() {}
 
@@ -47,5 +51,22 @@ public class SettingManager {
             return prefs.getBoolean(SOUND_ENABLED_KEY, true);
         }
         return true;
+    }
+
+    public void setDifficulty(int difficulty) {
+        if (prefs != null) {
+            prefs.edit().putInt(DIFFICULTY_KEY, difficulty).apply();
+        }
+    }
+
+    public int getDifficulty() {
+        if (prefs != null) {
+            return prefs.getInt(DIFFICULTY_KEY, DIFFICULTY_EASY);
+        }
+        return DIFFICULTY_EASY;
+    }
+
+    public boolean isHardMode() {
+        return getDifficulty() == DIFFICULTY_HARD;
     }
 }
