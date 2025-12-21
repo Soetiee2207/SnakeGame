@@ -1,0 +1,590 @@
+==========================================================================
+                    TÀI LIỆU THIẾT KẾ HỆ THỐNG
+                        SNAKE GAME - ANDROID
+==========================================================================
+
+I. TỔNG QUAN DỰ ÁN
+==================
+Tên ứng dụng: Snake Game
+Nền tảng: Android
+Ngôn ngữ: Java
+Công nghệ: Android SDK, Canvas 2D Graphics
+
+Mô tả: Ứng dụng game rắn săn mồi trên nền tảng Android với các tính năng:
+- Điều khiển rắn bằng cử chỉ vuốt (swipe gestures)
+- Hai mức độ khó: Easy (đi xuyên tường) và Hard (chạm tường chết)
+- Hệ thống âm thanh: nhạc nền và hiệu ứng
+- Lưu điểm cao (High Score)
+- Giao diện đồ họa với font và hình ảnh tùy chỉnh
+
+
+==========================================================================
+II. SƠ ĐỒ USE CASE (USE CASE DIAGRAM)
+==========================================================================
+
+                    +---------------------------+
+                    |       SNAKE GAME          |
+                    +---------------------------+
+                              |
+    +-------------------------+-------------------------+
+    |                         |                         |
+    v                         v                         v
++--------+              +-----------+             +-----------+
+| Menu   |              |   Game    |             | Settings  |
++--------+              +-----------+             +-----------+
+    |                         |                         |
+    v                         v                         v
+
++------------------------------------------------------------------+
+|                         NGƯỜI CHƠI                                |
++------------------------------------------------------------------+
+         |              |              |              |
+         v              v              v              v
+    +---------+   +-----------+  +-----------+  +-----------+
+    | UC1:    |   | UC2:      |  | UC3:      |  | UC4:      |
+    | Bắt đầu |   | Điều khiển|  | Tạm dừng  |  | Cài đặt   |
+    | chơi    |   | rắn       |  | /Tiếp tục |  | độ khó    |
+    +---------+   +-----------+  +-----------+  +-----------+
+         |              |              |              |
+         v              v              v              v
+    +---------+   +-----------+  +-----------+  +-----------+
+    | UC5:    |   | UC6:      |  | UC7:      |  | UC8:      |
+    | Ăn mồi  |   | Va chạm   |  | Xem điểm  |  | Bật/tắt   |
+    |         |   | (chết)    |  | cao       |  | âm thanh  |
+    +---------+   +-----------+  +-----------+  +-----------+
+
+CHI TIẾT CÁC USE CASE:
+
+UC1 - Bắt đầu chơi:
+  - Actor: Người chơi
+  - Mô tả: Người chơi tap vào màn hình để bắt đầu game
+  - Điều kiện tiên quyết: Đang ở màn hình "Tap to Start"
+  - Luồng chính:
+    1. Người chơi tap màn hình
+    2. Hệ thống chuyển trạng thái sang PLAYING
+    3. Rắn bắt đầu di chuyển
+
+UC2 - Điều khiển rắn:
+  - Actor: Người chơi
+  - Mô tả: Điều khiển hướng di chuyển bằng cử chỉ vuốt
+  - Điều kiện tiên quyết: Game đang ở trạng thái PLAYING
+  - Luồng chính:
+    1. Người chơi vuốt theo hướng mong muốn (UP/DOWN/LEFT/RIGHT)
+    2. Hệ thống xử lý gesture và đổi hướng rắn
+    3. Rắn di chuyển theo hướng mới
+
+UC3 - Tạm dừng/Tiếp tục:
+  - Actor: Người chơi
+  - Mô tả: Tạm dừng game và hiển thị menu pause
+  - Luồng chính:
+    1. Người chơi nhấn nút Pause
+    2. Hiển thị popup với RESUME và MENU
+    3. Chọn RESUME: Quay về "Tap to Start", tap để tiếp tục
+    4. Chọn MENU: Quay về màn hình menu chính
+
+UC4 - Cài đặt độ khó:
+  - Actor: Người chơi
+  - Mô tả: Chọn độ khó Easy hoặc Hard
+  - Luồng chính:
+    1. Người chơi vào Settings
+    2. Chọn Easy hoặc Hard
+    3. Hệ thống lưu cài đặt
+
+UC5 - Ăn mồi:
+  - Actor: Hệ thống
+  - Mô tả: Rắn ăn thức ăn và tăng điểm
+  - Điều kiện tiên quyết: Đầu rắn chạm vào thức ăn
+  - Luồng chính:
+    1. Phát âm thanh ăn mồi
+    2. Tăng 10 điểm
+    3. Rắn dài thêm 1 đốt
+    4. Thức ăn xuất hiện ở vị trí mới
+
+UC6 - Va chạm (Game Over):
+  - Actor: Hệ thống
+  - Mô tả: Xử lý khi rắn va chạm
+  - Điều kiện:
+    + Chạm vào thân mình: Luôn chết
+    + Chạm tường (Easy): Đi xuyên sang bên kia
+    + Chạm tường (Hard): Chết
+  - Luồng chính:
+    1. Phát âm thanh chết
+    2. Lưu điểm cao nếu cần
+    3. Hiển thị popup RESTART/MENU
+
+UC7 - Xem điểm cao:
+  - Actor: Người chơi
+  - Mô tả: Xem điểm cao nhất đã đạt được
+  - Vị trí hiển thị: Màn hình Menu
+
+UC8 - Bật/tắt âm thanh:
+  - Actor: Người chơi
+  - Mô tả: Bật hoặc tắt nhạc và hiệu ứng âm thanh
+  - Vị trí: Nút sound trên màn hình Game
+
+
+==========================================================================
+III. SƠ ĐỒ LỚP (CLASS DIAGRAM)
+==========================================================================
+
++------------------------------------------------------------------+
+|                        PACKAGE STRUCTURE                          |
++------------------------------------------------------------------+
+|  com.example.btl_snake_game                                       |
+|  ├── MainActivity                                                 |
+|  ├── game/                                                        |
+|  │   ├── GameController                                           |
+|  │   ├── GameEngine                                               |
+|  │   ├── GameState (enum)                                         |
+|  │   └── objects/                                                 |
+|  │       ├── Snake                                                |
+|  │       └── Food                                                 |
+|  ├── ui/                                                          |
+|  │   ├── GameActivity                                             |
+|  │   ├── MenuActivity                                             |
+|  │   ├── SettingActivity                                          |
+|  │   ├── GameView                                                 |
+|  │   ├── GameThread                                               |
+|  │   └── InputHandler                                             |
+|  └── util/                                                        |
+|      ├── AssetManager                                             |
+|      ├── SettingManager                                           |
+|      ├── SoundManager                                             |
+|      └── Vector2D                                                 |
++------------------------------------------------------------------+
+
+CHI TIẾT CÁC LỚP:
+
+═══════════════════════════════════════════════════════════════════
+1. PACKAGE: game
+═══════════════════════════════════════════════════════════════════
+
+┌─────────────────────────────────────────────────────────────────┐
+│                        GameController                            │
+├─────────────────────────────────────────────────────────────────┤
+│ - gameEngine: GameEngine                                         │
+│ - gameThread: GameThread                                         │
+│ - gestureDetector: GestureDetector                               │
+│ - context: Context                                               │
+│ - gameView: GameView                                             │
+│ - isInitialized: boolean                                         │
+│ - scoreListener: ScoreUpdateListener                             │
+├─────────────────────────────────────────────────────────────────┤
+│ + init(Context, GameView): void                                  │
+│ + start(): void                                                  │
+│ + stop(): void                                                   │
+│ + destroy(): void                                                │
+│ + getGestureDetector(): GestureDetector                          │
+│ + getGameEngine(): GameEngine                                    │
+│ + setScoreUpdateListener(ScoreUpdateListener): void              │
+└─────────────────────────────────────────────────────────────────┘
+Vai trò: Điều phối viên trung tâm, khởi tạo và quản lý các thành phần game
+
+┌─────────────────────────────────────────────────────────────────┐
+│                         GameEngine                               │
+├─────────────────────────────────────────────────────────────────┤
+│ - snake: Snake                                                   │
+│ - food: Food                                                     │
+│ - state: GameState                                               │
+│ - score: int                                                     │
+│ - gridWidth, gridHeight, cellSize: int                           │
+│ - settingManager: SettingManager                                 │
+├─────────────────────────────────────────────────────────────────┤
+│ + initGame(): void                                               │
+│ + update(): void                                                 │
+│ + changeDirection(Vector2D): void                                │
+│ + startGame(): void                                              │
+│ + resumeToMenu(): void                                           │
+│ + getState(): GameState                                          │
+│ + getScore(): int                                                │
+│ + getSnake(): Snake                                              │
+│ + getFood(): Food                                                │
+└─────────────────────────────────────────────────────────────────┘
+Vai trò: Xử lý logic game chính (di chuyển, va chạm, điểm số)
+
+┌─────────────────────────────────────────────────────────────────┐
+│                   <<enumeration>> GameState                      │
+├─────────────────────────────────────────────────────────────────┤
+│ MENU                                                             │
+│ PLAYING                                                          │
+│ PAUSED                                                           │
+│ GAME_OVER                                                        │
+└─────────────────────────────────────────────────────────────────┘
+Vai trò: Định nghĩa các trạng thái của game
+
+┌─────────────────────────────────────────────────────────────────┐
+│                           Snake                                  │
+├─────────────────────────────────────────────────────────────────┤
+│ - body: List<Vector2D>                                           │
+│ - direction: Vector2D                                            │
+│ - cellSize: int                                                  │
+├─────────────────────────────────────────────────────────────────┤
+│ + move(): void                                                   │
+│ + grow(): void                                                   │
+│ + getHead(): Vector2D                                            │
+│ + getBody(): List<Vector2D>                                      │
+│ + setDirection(Vector2D): void                                   │
+│ + checkWallCollision(int, int): boolean                          │
+│ + checkSelfCollision(): boolean                                  │
+└─────────────────────────────────────────────────────────────────┘
+Vai trò: Đối tượng rắn với thân, hướng di chuyển
+
+┌─────────────────────────────────────────────────────────────────┐
+│                           Food                                   │
+├─────────────────────────────────────────────────────────────────┤
+│ - position: Vector2D                                             │
+│ - gridWidth, gridHeight, cellSize: int                           │
+├─────────────────────────────────────────────────────────────────┤
+│ + spawn(): void                                                  │
+│ + getPosition(): Vector2D                                        │
+│ + isEaten(Vector2D): boolean                                     │
+└─────────────────────────────────────────────────────────────────┘
+Vai trò: Đối tượng thức ăn, spawn ngẫu nhiên
+
+═══════════════════════════════════════════════════════════════════
+2. PACKAGE: ui
+═══════════════════════════════════════════════════════════════════
+
+┌─────────────────────────────────────────────────────────────────┐
+│                        GameActivity                              │
+├─────────────────────────────────────────────────────────────────┤
+│ - controller: GameController                                     │
+│ - gameView: GameView                                             │
+│ - tvScore: TextView                                              │
+│ - btnPause, btnSound: ImageButton                                │
+│ - isPaused, isSoundEnabled: boolean                              │
+├─────────────────────────────────────────────────────────────────┤
+│ # onCreate(Bundle): void                                         │
+│ - initGame(): void                                               │
+│ - setupPauseListener(): void                                     │
+│ - setupGameOverListener(): void                                  │
+│ - togglePause(): void                                            │
+│ - resumeGame(): void                                             │
+│ - restartGame(): void                                            │
+│ + navigateToMenu(): void                                         │
+└─────────────────────────────────────────────────────────────────┘
+Vai trò: Activity màn hình chơi game
+
+┌─────────────────────────────────────────────────────────────────┐
+│                        MenuActivity                              │
+├─────────────────────────────────────────────────────────────────┤
+│ - btnPlay, btnSettings, btnExit: Button                          │
+│ - tvHighScore: TextView                                          │
+│ - ivLogo: ImageView                                              │
+├─────────────────────────────────────────────────────────────────┤
+│ # onCreate(Bundle): void                                         │
+│ - applyAssets(): void                                            │
+│ - updateHighScore(): void                                        │
+│ - navigateToGame(): void                                         │
+│ - navigateToSettings(): void                                     │
+│ - exitApp(): void                                                │
+└─────────────────────────────────────────────────────────────────┘
+Vai trò: Activity màn hình menu chính
+
+┌─────────────────────────────────────────────────────────────────┐
+│                       SettingActivity                            │
+├─────────────────────────────────────────────────────────────────┤
+│ - rbEasy, rbHard: RadioButton                                    │
+│ - btnBack: Button                                                │
+│ - settingManager: SettingManager                                 │
+├─────────────────────────────────────────────────────────────────┤
+│ # onCreate(Bundle): void                                         │
+│ - loadSettings(): void                                           │
+│ - saveDifficulty(int): void                                      │
+│ - getDifficulty(): int                                           │
+└─────────────────────────────────────────────────────────────────┘
+Vai trò: Activity màn hình cài đặt
+
+┌─────────────────────────────────────────────────────────────────┐
+│                         GameView                                 │
+├─────────────────────────────────────────────────────────────────┤
+│ - gameEngine: GameEngine                                         │
+│ - snakePaint, foodPaint, textPaint: Paint                        │
+│ - isPaused: boolean                                              │
+│ - pauseActionListener: OnPauseActionListener                     │
+│ - gameOverActionListener: OnGameOverActionListener               │
+├─────────────────────────────────────────────────────────────────┤
+│ # onDraw(Canvas): void                                           │
+│ - drawBackground(Canvas): void                                   │
+│ - drawSnake(Canvas): void                                        │
+│ - drawFood(Canvas): void                                         │
+│ - drawPausePopup(Canvas): void                                   │
+│ - drawGameOver(Canvas): void                                     │
+│ - drawMenu(Canvas): void                                         │
+│ + onTouchEvent(MotionEvent): boolean                             │
+│ + setPaused(boolean): void                                       │
+└─────────────────────────────────────────────────────────────────┘
+Vai trò: Custom View để vẽ game lên màn hình
+
+┌─────────────────────────────────────────────────────────────────┐
+│                        GameThread                                │
+├─────────────────────────────────────────────────────────────────┤
+│ - gameEngine: GameEngine                                         │
+│ - gameView: GameView                                             │
+│ - running, alive: volatile boolean                               │
+│ - currentFPS, baseFPS: int                                       │
+│ - scoreListener: ScoreUpdateListener                             │
+├─────────────────────────────────────────────────────────────────┤
+│ + run(): void                                                    │
+│ + setRunning(boolean): void                                      │
+│ + stopThread(): void                                             │
+│ + setScoreUpdateListener(ScoreUpdateListener): void              │
+└─────────────────────────────────────────────────────────────────┘
+Vai trò: Thread game loop, cập nhật và vẽ theo FPS
+
+┌─────────────────────────────────────────────────────────────────┐
+│                       InputHandler                               │
+├─────────────────────────────────────────────────────────────────┤
+│ - gameEngine: GameEngine                                         │
+│ - cellSize: int                                                  │
+├─────────────────────────────────────────────────────────────────┤
+│ + onDown(MotionEvent): boolean                                   │
+│ + onSingleTapUp(MotionEvent): boolean                            │
+│ + onFling(MotionEvent, MotionEvent, float, float): boolean       │
+└─────────────────────────────────────────────────────────────────┘
+Vai trò: Xử lý cử chỉ vuốt và tap
+
+═══════════════════════════════════════════════════════════════════
+3. PACKAGE: util
+═══════════════════════════════════════════════════════════════════
+
+┌─────────────────────────────────────────────────────────────────┐
+│                       AssetManager                               │
+├─────────────────────────────────────────────────────────────────┤
+│ + snakeHead, snakeBody, food: static Bitmap                      │
+│ + menuBackground, gameBackground: static Bitmap                  │
+│ + pauseIcon, volumeIcon: static Bitmap                           │
+│ + gameFont: static Typeface                                      │
+├─────────────────────────────────────────────────────────────────┤
+│ + loadAllAssets(): void                                          │
+│ - loadBitmap(String): Bitmap                                     │
+│ - loadFont(String): Typeface                                     │
+└─────────────────────────────────────────────────────────────────┘
+Vai trò: Load và quản lý tài nguyên (hình ảnh, font)
+
+┌─────────────────────────────────────────────────────────────────┐
+│                      SettingManager                              │
+├─────────────────────────────────────────────────────────────────┤
+│ - instance: static SettingManager (Singleton)                    │
+│ - prefs: SharedPreferences                                       │
+├─────────────────────────────────────────────────────────────────┤
+│ + getInstance(): SettingManager                                  │
+│ + init(Context): void                                            │
+│ + getHighScore() / setHighScore(int): int/void                   │
+│ + isSoundEnabled() / setSoundEnabled(boolean): boolean/void      │
+│ + getDifficulty() / setDifficulty(int): int/void                 │
+│ + isHardMode(): boolean                                          │
+└─────────────────────────────────────────────────────────────────┘
+Vai trò: Lưu trữ cài đặt người dùng (Singleton Pattern)
+
+┌─────────────────────────────────────────────────────────────────┐
+│                       SoundManager                               │
+├─────────────────────────────────────────────────────────────────┤
+│ - instance: static SoundManager (Singleton)                      │
+│ - menuMusicPlayer, gameMusicPlayer: MediaPlayer                  │
+│ - soundPool: SoundPool                                           │
+│ - sfxEatId, sfxDieId: int                                        │
+├─────────────────────────────────────────────────────────────────┤
+│ + getInstance(): SoundManager                                    │
+│ + init(Context): void                                            │
+│ + playMenuMusic() / stopMenuMusic(): void                        │
+│ + playGameMusic() / stopGameMusic(): void                        │
+│ + playEatSound(): void                                           │
+│ + playDieSound(): void                                           │
+│ + pauseAll(): void                                               │
+│ + toggleSound(boolean): void                                     │
+└─────────────────────────────────────────────────────────────────┘
+Vai trò: Quản lý âm thanh (nhạc nền và hiệu ứng)
+
+┌─────────────────────────────────────────────────────────────────┐
+│                         Vector2D                                 │
+├─────────────────────────────────────────────────────────────────┤
+│ - x, y: int                                                      │
+├─────────────────────────────────────────────────────────────────┤
+│ + getX() / setX(int): int/void                                   │
+│ + getY() / setY(int): int/void                                   │
+│ + equals(Object): boolean                                        │
+│ + hashCode(): int                                                │
+└─────────────────────────────────────────────────────────────────┘
+Vai trò: Lớp tiện ích biểu diễn tọa độ 2D
+
+MỐI QUAN HỆ GIỮA CÁC LỚP:
+
+GameActivity ──────> GameController ──────> GameEngine
+     │                     │                    │
+     │                     │                    ├──> Snake
+     │                     │                    └──> Food
+     │                     │
+     │                     ├──> GameThread ──────> GameView
+     │                     │
+     │                     └──> InputHandler
+     │
+     └──> GameView
+
+MenuActivity ──────> SettingManager (Singleton)
+     │
+     └──> SoundManager (Singleton)
+
+SettingActivity ──> SettingManager
+
+
+==========================================================================
+IV. SƠ ĐỒ SEQUENCE (SEQUENCE DIAGRAM)
+==========================================================================
+
+SEQUENCE 1: BẮT ĐẦU GAME
+─────────────────────────────────────────────────────────────────
+
+User        MenuActivity     GameActivity    GameController    GameEngine
+ │               │                │                │               │
+ │──[Play]───────>│                │                │               │
+ │               │──startActivity─>│                │               │
+ │               │                │──init()────────>│               │
+ │               │                │                │──new Engine───>│
+ │               │                │                │                │
+ │               │                │                │<──GameEngine───│
+ │               │                │                │                │
+ │               │                │                │──new Thread────┐
+ │               │                │                │                │
+ │               │                │<─────────────────thread.start()─┘
+ │               │                │                │               │
+ │               │                │    [Hiện "Tap to Start"]       │
+ │               │                │                │               │
+ │──[Tap]─────────────────────────>│                │               │
+ │               │                │──onTouch───────>│               │
+ │               │                │                │──startGame()──>│
+ │               │                │                │               │
+ │               │                │     [Game bắt đầu chạy]        │
+
+
+SEQUENCE 2: ĐIỀU KHIỂN RẮN VÀ ĂN MỒI
+─────────────────────────────────────────────────────────────────
+
+User       GameActivity    InputHandler    GameEngine      Snake       Food
+ │              │               │               │            │           │
+ │──[Swipe]─────>│               │               │            │           │
+ │              │──onFling()────>│               │            │           │
+ │              │               │──changeDir()──>│            │           │
+ │              │               │               │──setDir()──>│           │
+ │              │               │               │            │           │
+     [Game Loop - GameThread cập nhật liên tục]
+ │              │               │               │            │           │
+ │              │               │  ──update()───>│            │           │
+ │              │               │               │──move()────>│           │
+ │              │               │               │            │           │
+ │              │               │               │──isEaten?───────────────>│
+ │              │               │               │<─────true────────────────│
+ │              │               │               │            │           │
+ │              │               │               │──grow()────>│           │
+ │              │               │               │            │           │
+ │              │               │               │──spawn()────────────────>│
+ │              │               │               │            │           │
+ │              │               │               │──playEat()──>SoundManager
+
+
+SEQUENCE 3: PAUSE VÀ RESUME
+─────────────────────────────────────────────────────────────────
+
+User       GameActivity      GameView      GameController    GameEngine
+ │              │               │                │               │
+ │──[Pause]─────>│               │                │               │
+ │              │──setPaused(t)─>│                │               │
+ │              │               │──[vẽ popup]────┐│               │
+ │              │──stop()────────────────────────>│               │
+ │              │               │<───────────────┘│               │
+ │              │    [Hiển thị popup RESUME/MENU] │               │
+ │              │               │                │               │
+ │──[RESUME]────────────────────>│                │               │
+ │              │               │──onContinue()──>│               │
+ │              │──resumeGame()─>│                │               │
+ │              │               │                │──resumeToMenu─>│
+ │              │               │                │               │
+ │              │               │    [State = MENU]              │
+ │              │──start()───────────────────────>│               │
+ │              │               │                │               │
+ │              │    [Hiển thị "Tap to Start"]   │               │
+ │              │               │                │               │
+ │──[Tap]───────────────────────>│                │               │
+ │              │               │                │──startGame()──>│
+ │              │               │                │               │
+
+
+SEQUENCE 4: GAME OVER VÀ RESTART
+─────────────────────────────────────────────────────────────────
+
+GameThread    GameEngine      Snake     SoundManager    GameView       User
+    │              │            │            │             │             │
+    │──update()───>│            │            │             │             │
+    │              │──move()───>│            │             │             │
+    │              │            │            │             │             │
+    │              │──selfColl?>│            │             │             │
+    │              │<───true────│            │             │             │
+    │              │            │            │             │             │
+    │              │──playDie()──────────────>│             │             │
+    │              │──saveScore()             │             │             │
+    │              │            │            │             │             │
+    │              │  [State = GAME_OVER]    │             │             │
+    │              │            │            │             │             │
+    │──postInvalid─────────────────────────────────────────>│             │
+    │              │            │            │             │──[vẽ popup]─┐│
+    │              │            │            │             │<────────────┘│
+    │              │            │            │             │             │
+    │              │            │            │             │<─[RESTART]──│
+    │              │            │            │             │──onRestart()>│
+    │              │            │            │             │             │
+    │              │<───────────────────────────────initGame()───────────│
+    │              │            │            │             │             │
+
+
+==========================================================================
+V. KIẾN TRÚC VÀ DESIGN PATTERNS
+==========================================================================
+
+1. MVC PATTERN (Model-View-Controller):
+   - Model: GameEngine, Snake, Food, GameState
+   - View: GameView, các Activity layouts
+   - Controller: GameController, InputHandler
+
+2. SINGLETON PATTERN:
+   - SettingManager.getInstance()
+   - SoundManager.getInstance()
+   - Đảm bảo chỉ có 1 instance quản lý settings và sound
+
+3. OBSERVER PATTERN:
+   - ScoreUpdateListener: GameThread thông báo score cho Activity
+   - OnPauseActionListener: GameView thông báo pause action
+   - OnGameOverActionListener: GameView thông báo game over action
+
+4. GAME LOOP PATTERN:
+   - GameThread implements game loop với fixed FPS
+   - Update → Render → Sleep
+
+
+==========================================================================
+VI. CẤU TRÚC TÀI NGUYÊN (ASSETS)
+==========================================================================
+
+assets/
+├── fonts/
+│   └── yoster.ttf              (Font game retro)
+├── images/
+│   ├── snake_head.png          (Đầu rắn)
+│   ├── snake_body.png          (Thân rắn)
+│   ├── food.png                (Thức ăn)
+│   ├── button.png              (Background nút)
+│   ├── game_background.png     (Nền sân chơi)
+│   ├── menu_background.png     (Nền menu)
+│   ├── pause_game.png          (Icon pause)
+│   ├── volume_game.png         (Icon âm lượng)
+│   ├── snake_logo.png          (Logo)
+│   └── snake_title.png         (Title)
+└── sounds/
+    ├── 01 The Piano.mp3        (Nhạc nền menu)
+    ├── 02 99 Problems.mp3      (Nhạc nền game)
+    ├── sfx_eat.wav             (Hiệu ứng ăn mồi)
+    └── sfx_die.wav             (Hiệu ứng chết)
+
+
+==========================================================================
+                           HẾT TÀI LIỆU
+==========================================================================

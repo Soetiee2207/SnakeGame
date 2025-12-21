@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tài Liệu Giải Thích Code - Snake Game</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', serif;
+            line-height: 1.6;
+            margin: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            border-bottom: 3px solid #27ae60;
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            color: #27ae60;
+            border-bottom: 2px solid #bdc3c7;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+
+        h3 {
+            color: #2980b9;
+            margin-top: 20px;
+            background-color: #ecf0f1;
+            padding: 10px;
+        }
+
+        h4 {
+            color: #8e44ad;
+            margin-top: 15px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 15px 0;
+        }
+
+        th,
+        td {
+            border: 1px solid #bdc3c7;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background-color: #27ae60;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .code {
+            font-family: 'Courier New', monospace;
+            background-color: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        .method-table td:first-child {
+            font-family: 'Courier New', monospace;
+            white-space: nowrap;
+        }
+
+        ul {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+
+        li {
+            margin: 5px 0;
+        }
+
+        .package-header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 15px;
+            margin: 25px 0 15px 0;
+            font-size: 18px;
+        }
+
+        .file-section {
+            border: 1px solid #dee2e6;
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #fff;
+        }
+
+        .file-name {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }
+
+        .purpose {
+            background-color: #e8f6f3;
+            padding: 10px;
+            border-left: 4px solid #27ae60;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>TÀI LIỆU GIẢI THÍCH CODE<br>SNAKE GAME - ANDROID</h1>
+
+    <p style="text-align: center; font-style: italic;">Tài liệu này giải thích chi tiết các file code trong dự án Snake
+        Game.<br>Mỗi file được mô tả với: mục đích, các biến, các phương thức.</p>
+
+    <div class="package-header">I. PACKAGE: com.example.btl_snake_game</div>
+
+    <div class="file-section">
+        <div class="file-name">MainActivity.java</div>
+        <div class="purpose"><strong>Mục đích:</strong> Activity khởi động ban đầu, chuyển hướng đến MenuActivity.</div>
+        <table class="method-table">
+            <tr>
+                <th>Phương thức</th>
+                <th>Mô tả</th>
+            </tr>
+            <tr>
+                <td>onCreate(Bundle)</td>
+                <td>Khởi tạo và chuyển sang MenuActivity ngay lập tức</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="package-header">II. PACKAGE: com.example.btl_snake_game.game</div>
+
+    <div class="file-section">
+        <div class="file-name">GameState.java</div>
+        <div class="purpose"><strong>Mục đích:</strong> Enum định nghĩa 4 trạng thái của game.</div>
+        <table>
+            <tr>
+                <th>Giá trị</th>
+                <th>Mô tả</th>
+            </tr>
+            <tr>
+                <td>MENU</td>
+                <td>Màn hình "Tap to Start", chờ người chơi bắt đầu</td>
+            </tr>
+            <tr>
+                <td>PLAYING</td>
+                <td>Đang chơi, rắn di chuyển</td>
+            </tr>
+            <tr>
+                <td>PAUSED</td>
+                <td>Tạm dừng</td>
+            </tr>
+            <tr>
+                <td>GAME_OVER</td>
+                <td>Kết thúc game, hiển thị popup</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="file-section">
+        <div class="file-name">GameEngine.java</div>
+        <div class="purpose"><strong>Mục đích:</strong> Xử lý toàn bộ logic game (rắn, thức ăn, va chạm, điểm số).</div>
+
+        <h4>Biến thành viên:</h4>
+        <table>
+            <tr>
+                <th>Biến</th>
+                <th>Kiểu</th>
+                <th>Mô tả</th>
+            </tr>
+            <tr>
+                <td>snake</td>
+                <td>Snake</td>
+                <td>Đối tượng rắn</td>
+            </tr>
+            <tr>
+                <td>food</td>
+                <td>Food</td>
+                <td>Đối tượng thức ăn</td>
+            </tr>
+            <tr>
+                <td>state</td>
+                <td>GameState</td>
+                <td>Trạng thái hiện tại của game</td>
+            </tr>
+            <tr>
+                <td>score</td>
+                <td>int</td>
+                <td>Điểm số</td>
+            </tr>
+            <tr>
+                <td>gridWidth, gridHeight</td>
+                <td>int</td>
+                <td>Kích thước lưới (số ô)</td>
+            </tr>
+            <tr>
+                <td>cellSize</td>
+                <td>int</td>
+                <td>Kích thước mỗi ô (pixel)</td>
+            </tr>
+            <tr>
+                <td>settingManager</td>
+                <td>SettingManager</td>
+                <td>Quản lý cài đặt</td>
+            </tr>
+        </table>
+
+        <h4>Phương thức:</h4>
+        <table class="method-table">
+            <tr>
+                <th>Phương thức</th>
+                <th>Mô tả</th>
+            </tr>
+            <tr>
+                <td>GameEngine(int, int, int)</td>
+                <td>Constructor: Khởi tạo engine với kích thước lưới</td>
+            </tr>
+            <tr>
+                <td>initGame()</td>
+                <td>Khởi tạo game mới: tạo rắn ở giữa màn hình, spawn thức ăn, reset điểm = 0, state = MENU</td>
+            </tr>
+            <tr>
+                <td>update()</td>
+                <td>Cập nhật game mỗi frame:<br>1. Nếu không ở PLAYING → bỏ qua<br>2. Di chuyển rắn<br>3. Kiểm tra va
+                    chạm tường theo độ khó<br>4. Kiểm tra ăn thức ăn → tăng điểm<br>5. Kiểm tra va chạm thân → GAME_OVER
+                </td>
+            </tr>
+            <tr>
+                <td>wrapSnakePosition()</td>
+                <td>Xử lý wrap khi rắn đi ra khỏi màn hình (Easy mode)</td>
+            </tr>
+            <tr>
+                <td>changeDirection(Vector2D)</td>
+                <td>Đổi hướng di chuyển của rắn (chỉ khi đang PLAYING)</td>
+            </tr>
+            <tr>
+                <td>startGame()</td>
+                <td>Bắt đầu chơi:<br>- MENU → chuyển sang PLAYING (không reset)<br>- GAME_OVER → gọi initGame() rồi
+                    PLAYING</td>
+            </tr>
+            <tr>
+                <td>resumeToMenu()</td>
+                <td>Chuyển về state MENU (giữ nguyên vị trí rắn) để resume</td>
+            </tr>
+            <tr>
+                <td>saveHighScore()</td>
+                <td>Lưu điểm cao nếu score > highScore hiện tại</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="file-section">
+        <div class="file-name">GameController.java</div>
+        <div class="purpose"><strong>Mục đích:</strong> Điều phối viên trung tâm, khởi tạo và kết nối các thành phần.
+        </div>
+
+        <h4>Biến thành viên:</h4>
+        <table>
+            <tr>
+                <th>Biến</th>
+                <th>Kiểu</th>
+                <th>Mô tả</th>
+            </tr>
+            <tr>
+                <td>gameEngine</td>
+                <td>GameEngine</td>
+                <td>Logic game</td>
+            </tr>
+            <tr>
+                <td>gameThread</td>
+                <td>GameThread</td>
+                <td>Thread game loop</td>
+            </tr>
+            <tr>
+                <td>gestureDetector</td>
+                <td>GestureDetector</td>
+                <td>Phát hiện cử chỉ</td>
+            </tr>
+            <tr>
+                <td>isInitialized</td>
+                <td>boolean</td>
+                <td>Flag đã khởi tạo</td>
+            </tr>
+        </table>
+
+        <h4>Phương thức:</h4>
+        <table class="method-table">
+            <tr>
+                <th>Phương thức</th>
+                <th>Mô tả</th>
+            </tr>
+            <tr>
+                <td>init(Context, GameView)</td>
+                <td>Khởi tạo controller: Đợi GameView có kích thước → gọi initGameWithViewSize()</td>
+            </tr>
+            <tr>
+                <td>initGameWithViewSize()</td>
+                <td>Khởi tạo game với kích thước thực: Tạo GameEngine, InputHandler, GestureDetector, GameThread</td>
+            </tr>
+            <tr>
+                <td>start()</td>
+                <td>Set gameThread.running = true (tiếp tục cập nhật game)</td>
+            </tr>
+            <tr>
+                <td>stop()</td>
+                <td>Set gameThread.running = false (dừng cập nhật)</td>
+            </tr>
+            <tr>
+                <td>destroy()</td>
+                <td>Dừng thread hoàn toàn khi thoát app</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="package-header">III. PACKAGE: com.example.btl_snake_game.game.objects</div>
+
+    <div class="file-section">
+        <div class="file-name">Snake.java</div>
+        <div class="purpose"><strong>Mục đích:</strong> Đối tượng rắn với thân là danh sách các ô.</div>
+
+        <h4>Biến thành viên:</h4>
+        <table>
+            <tr>
+                <th>Biến</th>
+                <th>Kiểu</th>
+                <th>Mô tả</th>
+            </tr>
+            <tr>
+                <td>body</td>
+                <td>List&lt;Vector2D&gt;</td>
+                <td>Danh sách tọa độ các đốt rắn</td>
+            </tr>
+            <tr>
+                <td>direction</td>
+                <td>Vector2D</td>
+                <td>Hướng di chuyển hiện tại</td>
+            </tr>
+            <tr>
+                <td>cellSize</td>
+                <td>int</td>
+                <td>Kích thước mỗi ô</td>
+            </tr>
+        </table>
+
+        <h4>Phương thức:</h4>
+        <table class="method-table">
+            <tr>
+                <th>Phương thức</th>
+                <th>Mô tả</th>
+            </tr>
+            <tr>
+                <td>Snake(int, int, int)</td>
+                <td>Constructor: Tạo rắn với 3 đốt ở vị trí ban đầu, hướng phải</td>
+            </tr>
+            <tr>
+                <td>move()</td>
+                <td>Di chuyển rắn: Tính vị trí đầu mới, thêm đầu mới, xóa đuôi</td>
+            </tr>
+            <tr>
+                <td>grow()</td>
+                <td>Rắn dài thêm 1 đốt ở đuôi</td>
+            </tr>
+            <tr>
+                <td>getHead()</td>
+                <td>Trả về tọa độ đầu rắn</td>
+            </tr>
+            <tr>
+                <td>getBody()</td>
+                <td>Trả về toàn bộ thân rắn</td>
+            </tr>
+            <tr>
+                <td>setDirection(Vector2D)</td>
+                <td>Đặt hướng mới (kiểm tra không đi ngược lại)</td>
+            </tr>
+            <tr>
+                <td>checkWallCollision(int, int)</td>
+                <td>Kiểm tra đầu rắn có ra ngoài biên không</td>
+            </tr>
+            <tr>
+                <td>checkSelfCollision()</td>
+                <td>Kiểm tra đầu rắn có chạm vào thân không</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="file-section">
+        <div class="file-name">Food.java</div>
+        <div class="purpose"><strong>Mục đích:</strong> Đối tượng thức ăn, xuất hiện ngẫu nhiên.</div>
+
+        <h4>Phương thức:</h4>
+        <table class="method-table">
+            <tr>
+                <th>Phương thức</th>
+                <th>Mô tả</th>
+            </tr>
+            <tr>
+                <td>Food(int, int, int)</td>
+                <td>Constructor: Tạo thức ăn và spawn ở vị trí ngẫu nhiên</td>
+            </tr>
+            <tr>
+                <td>spawn()</td>
+                <td>Sinh thức ăn ở vị trí ngẫu nhiên trong lưới</td>
+            </tr>
+            <tr>
+                <td>getPosition()</td>
+                <td>Trả về tọa độ thức ăn</td>
+            </tr>
+            <tr>
+                <td>isEaten(Vector2D)</td>
+                <td>Kiểm tra đầu rắn có trùng vị trí thức ăn không</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="package-header">IV. PACKAGE: com.example.btl_snake_game.ui</div>
+
+    <div class="file-section">
+        <div class="file-name">GameActivity.java</div>
+        <div class="purpose"><strong>Mục đích:</strong> Activity màn hình chơi game chính.</div>
+
+        <h4>Biến thành viên:</h4>
+        <table>
+            <tr>
+                <th>Biến</th>
+                <th>Kiểu</th>
+                <th>Mô tả</th>
+            </tr>
+            <tr>
+                <td>controller</td>
+                <td>GameController</td>
+                <td>Điều phối game</td>
+            </tr>
+            <tr>
+                <td>gameView</td>
+                <td>GameView</td>
+                <td>View vẽ game</td>
+            </tr>
+            <tr>
+                <td>tvScore</td>
+                <td>TextView</td>
+                <td>Hiển thị điểm</td>
+            </tr>
+            <tr>
+                <td>btnPause, btnSound</td>
+                <td>ImageButton</td>
+                <td>Các nút điều khiển</td>
+            </tr>
+            <tr>
+                <td>isPaused, isSoundEnabled</td>
+                <td>boolean</td>
+                <td>Trạng thái</td>
+            </tr>
+        </table>
+
+        <h4>Phương thức:</h4>
+        <table class="method-table">
+            <tr>
+                <th>Phương thức</th>
+                <th>Mô tả</th>
+            </tr>
+            <tr>
+                <td>onCreate(Bundle)</td>
+                <td>Khởi tạo Activity: Set layout, ẩn system UI, khởi tạo views/assets/game</td>
+            </tr>
+            <tr>
+                <td>initGame()</td>
+                <td>Khởi tạo game: Tạo GameController, đăng ký listeners</td>
+            </tr>
+            <tr>
+                <td>setupPauseListener()</td>
+                <td>Đăng ký callback: onContinue() → resumeGame(), onReturnToMenu() → navigateToMenu()</td>
+            </tr>
+            <tr>
+                <td>setupGameOverListener()</td>
+                <td>Đăng ký callback: onRestart() → restartGame(), onReturnToMenu() → navigateToMenu()</td>
+            </tr>
+            <tr>
+                <td>togglePause()</td>
+                <td>Bật/tắt pause: stop/start controller, hiện/ẩn popup</td>
+            </tr>
+            <tr>
+                <td>resumeGame()</td>
+                <td>Resume từ pause: Đưa về MENU state, start controller</td>
+            </tr>
+            <tr>
+                <td>restartGame()</td>
+                <td>Restart game: Gọi initGame() trên engine, start controller</td>
+            </tr>
+            <tr>
+                <td>navigateToMenu()</td>
+                <td>Chuyển về MenuActivity</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="file-section">
+        <div class="file-name">MenuActivity.java</div>
+        <div class="purpose"><strong>Mục đích:</strong> Activity màn hình menu chính.</div>
+
+        <h4>Phương thức:</h4>
+        <table class="method-table">
+            <tr>
+                <th>Phương thức</th>
+                <th>Mô tả</th>
+            </tr>
+            <tr>
+                <td>onCreate(Bundle)</td>
+                <td>Khởi tạo menu: Load assets, apply font/hình ảnh, setup click listeners</td>
+            </tr>
+            <tr>
+                <td>onResume()</td>
+                <td>Cập nhật high score và phát nhạc menu</td>
+            </tr>
+            <tr>
+                <td>onPause()</td>
+                <td>Pause nhạc menu</td>
+            </tr>
+            <tr>
+                <td>applyAssets()</td>
+                <td>Áp dụng font và hình ảnh từ AssetManager</td>
+            </tr>
+            <tr>
+                <td>updateHighScore()</td>
+                <td>Lấy và hiển thị điểm cao từ SettingManager</td>
+            </tr>
+            <tr>
+                <td>navigateToGame()</td>
+                <td>Chuyển sang GameActivity</td>
+            </tr>
+            <tr>
+                <td>navigateToSettings()</td>
+                <td>Chuyển sang SettingActivity</td>
+            </tr>
+            <tr>
+                <td>exitApp()</td>
+                <td>Thoát ứng dụng</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="file-section">
+        <div class="file-name">SettingActivity.java</div>
+        <div class="purpose"><strong>Mục đích:</strong> Activity màn hình cài đặt.</div>
+
+        <h4>Phương thức:</h4>
+        <table class="method-table">
+            <tr>
+                <th>Phương thức</th>
+                <th>Mô tả</th>
+            </tr>
+            <tr>
+                <td>onCreate(Bundle)</td>
+                <td>Khởi tạo settings: Load cài đặt hiện tại, setup radio buttons</td>
+            </tr>
+            <tr>
+                <td>loadSettings()</td>
+                <td>Load độ khó từ SettingManager và chọn radio tương ứng</td>
+            </tr>
+            <tr>
+                <td>saveDifficulty(int)</td>
+                <td>Lưu độ khó vào SettingManager</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="file-section">
+        <div class="file-name">GameView.java</div>
+        <div class="purpose"><strong>Mục đích:</strong> Custom View vẽ toàn bộ game lên màn hình.</div>
+
+        <h4>Biến thành viên:</h4>
+        <table>
+            <tr>
+                <th>Biến</th>
+                <th>Kiểu</th>
+                <th>Mô tả</th>
+            </tr>
+            <tr>
+                <td>gameEngine</td>
+                <td>GameEngine</td>
+                <td>Tham chiếu engine để lấy data</td>
+            </tr>
+            <tr>
+                <td>snakePaint, foodPaint, textPaint</td>
+                <td>Paint</td>
+                <td>Paint objects cho vẽ</td>
+            </tr>
+            <tr>
+                <td>isPaused</td>
+                <td>boolean</td>
+                <td>Trạng thái pause</td>
+            </tr>
+            <tr>
+                <td>continueButtonRect, menuButtonRect</td>
+                <td>RectF</td>
+                <td>Vùng nút pause popup</td>
+            </tr>
+            <tr>
+                <td>restartButtonRect, gameOverMenuButtonRect</td>
+                <td>RectF</td>
+                <td>Vùng nút game over popup</td>
+            </tr>
+        </table>
+
+        <h4>Phương thức:</h4>
+        <table class="method-table">
+            <tr>
+                <th>Phương thức</th>
+                <th>Mô tả</th>
+            </tr>
+            <tr>
+                <td>onDraw(Canvas)</td>
+                <td>Vẽ game mỗi frame: background → food → snake → game over/menu → pause popup</td>
+            </tr>
+            <tr>
+                <td>drawBackground(Canvas)</td>
+                <td>Vẽ nền game (tile hình game_background.png)</td>
+            </tr>
+            <tr>
+                <td>drawSnake(Canvas)</td>
+                <td>Vẽ đầu và thân rắn</td>
+            </tr>
+            <tr>
+                <td>drawFood(Canvas)</td>
+                <td>Vẽ thức ăn</td>
+            </tr>
+            <tr>
+                <td>drawPausePopup(Canvas)</td>
+                <td>Vẽ popup pause: overlay tối, box, nút RESUME và MENU</td>
+            </tr>
+            <tr>
+                <td>drawGameOver(Canvas)</td>
+                <td>Vẽ popup game over: overlay, "GAME OVER", Score, nút RESTART và MENU</td>
+            </tr>
+            <tr>
+                <td>drawMenu(Canvas)</td>
+                <td>Vẽ màn hình "Tap to Start"</td>
+            </tr>
+            <tr>
+                <td>onTouchEvent(MotionEvent)</td>
+                <td>Xử lý touch: Kiểm tra click vào các nút popup</td>
+            </tr>
+            <tr>
+                <td>setPaused(boolean)</td>
+                <td>Set trạng thái pause và invalidate view</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="file-section">
+        <div class="file-name">GameThread.java</div>
+        <div class="purpose"><strong>Mục đích:</strong> Thread game loop, cập nhật game theo FPS cố định.</div>
+
+        <h4>Biến thành viên:</h4>
+        <table>
+            <tr>
+                <th>Biến</th>
+                <th>Kiểu</th>
+                <th>Mô tả</th>
+            </tr>
+            <tr>
+                <td>gameEngine</td>
+                <td>GameEngine</td>
+                <td>Engine để update</td>
+            </tr>
+            <tr>
+                <td>gameView</td>
+                <td>GameView</td>
+                <td>View để invalidate</td>
+            </tr>
+            <tr>
+                <td>running</td>
+                <td>volatile boolean</td>
+                <td>Flag đang update game hay không</td>
+            </tr>
+            <tr>
+                <td>alive</td>
+                <td>volatile boolean</td>
+                <td>Flag thread còn chạy hay không</td>
+            </tr>
+            <tr>
+                <td>currentFPS, baseFPS</td>
+                <td>int</td>
+                <td>Tốc độ khung hình (Hard: 8, Easy: 5)</td>
+            </tr>
+        </table>
+
+        <h4>Phương thức:</h4>
+        <table class="method-table">
+            <tr>
+                <th>Phương thức</th>
+                <th>Mô tả</th>
+            </tr>
+            <tr>
+                <td>run()</td>
+                <td>Game loop: while(alive) { if(running) update → invalidate → sleep }</td>
+            </tr>
+            <tr>
+                <td>setRunning(boolean)</td>
+                <td>Bật/tắt việc update game (không dừng thread)</td>
+            </tr>
+            <tr>
+                <td>stopThread()</td>
+                <td>Dừng thread hoàn toàn (alive = false)</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="file-section">
+        <div class="file-name">InputHandler.java</div>
+        <div class="purpose"><strong>Mục đích:</strong> Xử lý cử chỉ vuốt và tap từ người dùng.</div>
+
+        <h4>Phương thức:</h4>
+        <table class="method-table">
+            <tr>
+                <th>Phương thức</th>
+                <th>Mô tả</th>
+            </tr>
+            <tr>
+                <td>onDown(MotionEvent)</td>
+                <td>Luôn return true để nhận các event tiếp theo</td>
+            </tr>
+            <tr>
+                <td>onSingleTapUp(MotionEvent)</td>
+                <td>Xử lý tap: Nếu state = MENU → gọi startGame()</td>
+            </tr>
+            <tr>
+                <td>onFling(e1, e2, vX, vY)</td>
+                <td>Xử lý vuốt: Xác định hướng → gọi changeDirection()</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="package-header">V. PACKAGE: com.example.btl_snake_game.util</div>
+
+    <div class="file-section">
+        <div class="file-name">Vector2D.java</div>
+        <div class="purpose"><strong>Mục đích:</strong> Lớp tiện ích biểu diễn điểm/vector 2D.</div>
+
+        <h4>Phương thức:</h4>
+        <table class="method-table">
+            <tr>
+                <th>Phương thức</th>
+                <th>Mô tả</th>
+            </tr>
+            <tr>
+                <td>Vector2D(int x, int y)</td>
+                <td>Constructor</td>
+            </tr>
+            <tr>
+                <td>getX(), setX(int)</td>
+                <td>Getter/setter cho x</td>
+            </tr>
+            <tr>
+                <td>getY(), setY(int)</td>
+                <td>Getter/setter cho y</td>
+            </tr>
+            <tr>
+                <td>equals(Object)</td>
+                <td>So sánh 2 vector</td>
+            </tr>
+            <tr>
+                <td>hashCode()</td>
+                <td>Hash cho sử dụng trong collections</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="file-section">
+        <div class="file-name">AssetManager.java</div>
+        <div class="purpose"><strong>Mục đích:</strong> Load và quản lý tài nguyên (hình ảnh, font) từ assets.</div>
+
+        <h4>Biến static:</h4>
+        <table>
+            <tr>
+                <th>Biến</th>
+                <th>Kiểu</th>
+                <th>Mô tả</th>
+            </tr>
+            <tr>
+                <td>snakeHead, snakeBody, food</td>
+                <td>Bitmap</td>
+                <td>Sprites game</td>
+            </tr>
+            <tr>
+                <td>button, gameBackground, menuBackground</td>
+                <td>Bitmap</td>
+                <td>Hình UI</td>
+            </tr>
+            <tr>
+                <td>pauseIcon, volumeIcon, snakeLogo, snakeTitle</td>
+                <td>Bitmap</td>
+                <td>Icons</td>
+            </tr>
+            <tr>
+                <td>gameFont</td>
+                <td>Typeface</td>
+                <td>Font game</td>
+            </tr>
+        </table>
+
+        <h4>Phương thức:</h4>
+        <table class="method-table">
+            <tr>
+                <th>Phương thức</th>
+                <th>Mô tả</th>
+            </tr>
+            <tr>
+                <td>loadAllAssets()</td>
+                <td>Load tất cả sprites, hình UI, và font</td>
+            </tr>
+            <tr>
+                <td>loadBitmap(String)</td>
+                <td>Load 1 file bitmap từ assets/images/</td>
+            </tr>
+            <tr>
+                <td>loadFont(String)</td>
+                <td>Load 1 file font từ assets/fonts/</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="file-section">
+        <div class="file-name">SettingManager.java (Singleton)</div>
+        <div class="purpose"><strong>Mục đích:</strong> Lưu trữ cài đặt người dùng sử dụng SharedPreferences.</div>
+
+        <h4>Phương thức:</h4>
+        <table class="method-table">
+            <tr>
+                <th>Phương thức</th>
+                <th>Mô tả</th>
+            </tr>
+            <tr>
+                <td>getInstance()</td>
+                <td>Trả về instance duy nhất (tạo nếu chưa có)</td>
+            </tr>
+            <tr>
+                <td>init(Context)</td>
+                <td>Khởi tạo SharedPreferences</td>
+            </tr>
+            <tr>
+                <td>getHighScore() / setHighScore(int)</td>
+                <td>Đọc/ghi điểm cao</td>
+            </tr>
+            <tr>
+                <td>isSoundEnabled() / setSoundEnabled(boolean)</td>
+                <td>Đọc/ghi trạng thái âm thanh</td>
+            </tr>
+            <tr>
+                <td>getDifficulty() / setDifficulty(int)</td>
+                <td>Đọc/ghi độ khó (0 = Easy, 1 = Hard)</td>
+            </tr>
+            <tr>
+                <td>isHardMode()</td>
+                <td>Trả về true nếu đang ở Hard mode</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="file-section">
+        <div class="file-name">SoundManager.java (Singleton)</div>
+        <div class="purpose"><strong>Mục đích:</strong> Quản lý âm thanh game (nhạc nền và hiệu ứng).</div>
+
+        <h4>Biến thành viên:</h4>
+        <table>
+            <tr>
+                <th>Biến</th>
+                <th>Kiểu</th>
+                <th>Mô tả</th>
+            </tr>
+            <tr>
+                <td>menuMusicPlayer, gameMusicPlayer</td>
+                <td>MediaPlayer</td>
+                <td>Nhạc nền</td>
+            </tr>
+            <tr>
+                <td>soundPool</td>
+                <td>SoundPool</td>
+                <td>Hiệu ứng ngắn</td>
+            </tr>
+            <tr>
+                <td>sfxEatId, sfxDieId</td>
+                <td>int</td>
+                <td>ID của sound effects</td>
+            </tr>
+        </table>
+
+        <h4>Phương thức:</h4>
+        <table class="method-table">
+            <tr>
+                <th>Phương thức</th>
+                <th>Mô tả</th>
+            </tr>
+            <tr>
+                <td>getInstance()</td>
+                <td>Trả về instance duy nhất</td>
+            </tr>
+            <tr>
+                <td>init(Context)</td>
+                <td>Tạo SoundPool, load sound effects từ assets</td>
+            </tr>
+            <tr>
+                <td>playMenuMusic() / stopMenuMusic()</td>
+                <td>Phát/dừng nhạc menu (01 The Piano.mp3)</td>
+            </tr>
+            <tr>
+                <td>playGameMusic() / stopGameMusic()</td>
+                <td>Phát/dừng nhạc game (02 99 Problems.mp3)</td>
+            </tr>
+            <tr>
+                <td>playEatSound()</td>
+                <td>Phát hiệu ứng ăn mồi (sfx_eat.wav)</td>
+            </tr>
+            <tr>
+                <td>playDieSound()</td>
+                <td>Phát hiệu ứng chết (sfx_die.wav)</td>
+            </tr>
+            <tr>
+                <td>pauseAll()</td>
+                <td>Pause tất cả nhạc</td>
+            </tr>
+            <tr>
+                <td>toggleSound(boolean)</td>
+                <td>Bật/tắt âm thanh</td>
+            </tr>
+            <tr>
+                <td>release()</td>
+                <td>Giải phóng tài nguyên</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="package-header">VI. LUỒNG HOẠT ĐỘNG CHÍNH</div>
+
+    <table>
+        <tr>
+            <th>Bước</th>
+            <th>Mô tả</th>
+        </tr>
+        <tr>
+            <td>1. Khởi động</td>
+            <td>MainActivity → MenuActivity (phát nhạc menu)</td>
+        </tr>
+        <tr>
+            <td>2. Bắt đầu chơi</td>
+            <td>MenuActivity [Play] → GameActivity → GameController.init() → Hiện "Tap to Start" → Tap → PLAYING</td>
+        </tr>
+        <tr>
+            <td>3. Đang chơi</td>
+            <td>GameThread.run(): update() → postInvalidate() → repeat theo FPS</td>
+        </tr>
+        <tr>
+            <td>4. Pause</td>
+            <td>User [Pause] → stop() → hiện popup → [RESUME] → resumeToMenu() → start() → Tap → PLAYING</td>
+        </tr>
+        <tr>
+            <td>5. Game Over</td>
+            <td>Va chạm → GAME_OVER → hiện popup → [RESTART] → initGame() → PLAYING</td>
+        </tr>
+    </table>
+
+</body>
+
+</html>

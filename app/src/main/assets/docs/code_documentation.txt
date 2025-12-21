@@ -1,0 +1,610 @@
+==========================================================================
+                    TÀI LIỆU GIẢI THÍCH CODE
+                        SNAKE GAME - ANDROID
+==========================================================================
+
+Tài liệu này giải thích chi tiết các file code trong dự án Snake Game.
+Mỗi file được mô tả với: mục đích, các biến, các phương thức.
+
+
+==========================================================================
+I. PACKAGE: com.example.btl_snake_game
+==========================================================================
+
+FILE: MainActivity.java
+------------------------------------------------------------------------
+Mục đích: Activity khởi động ban đầu, chuyển hướng đến MenuActivity.
+
+Phương thức:
+- onCreate(Bundle): Khởi tạo và chuyển sang MenuActivity ngay lập tức.
+
+
+==========================================================================
+II. PACKAGE: com.example.btl_snake_game.game
+==========================================================================
+
+FILE: GameState.java
+------------------------------------------------------------------------
+Mục đích: Enum định nghĩa 4 trạng thái của game.
+
+Giá trị:
+- MENU: Màn hình "Tap to Start", chờ người chơi bắt đầu
+- PLAYING: Đang chơi, rắn di chuyển
+- PAUSED: Tạm dừng
+- GAME_OVER: Kết thúc game, hiển thị popup
+
+
+FILE: GameEngine.java
+------------------------------------------------------------------------
+Mục đích: Xử lý toàn bộ logic game (rắn, thức ăn, va chạm, điểm số).
+
+Biến thành viên:
+- snake: Đối tượng rắn
+- food: Đối tượng thức ăn
+- state: Trạng thái hiện tại của game
+- score: Điểm số
+- gridWidth, gridHeight: Kích thước lưới (số ô)
+- cellSize: Kích thước mỗi ô (pixel)
+- settingManager: Quản lý cài đặt
+
+Phương thức:
+- GameEngine(int gridWidth, int gridHeight, int cellSize)
+  Constructor: Khởi tạo engine với kích thước lưới.
+
+- initGame()
+  Khởi tạo game mới: tạo rắn ở giữa màn hình, spawn thức ăn, 
+  reset điểm = 0, state = MENU.
+
+- update()
+  Cập nhật game mỗi frame:
+  1. Nếu không ở PLAYING -> bỏ qua
+  2. Di chuyển rắn
+  3. Kiểm tra va chạm tường theo độ khó:
+     - Hard: chạm tường -> GAME_OVER
+     - Easy: đi xuyên tường (wrap around)
+  4. Kiểm tra ăn thức ăn -> tăng điểm, phát âm thanh
+  5. Kiểm tra va chạm thân -> GAME_OVER
+
+- wrapSnakePosition()
+  Xử lý wrap khi rắn đi ra khỏi màn hình (Easy mode).
+  Đầu rắn xuất hiện ở phía đối diện.
+
+- changeDirection(Vector2D direction)
+  Đổi hướng di chuyển của rắn (chỉ khi đang PLAYING).
+
+- startGame()
+  Bắt đầu chơi:
+  - Nếu state = MENU: chuyển sang PLAYING (không reset)
+  - Nếu state = GAME_OVER: gọi initGame() rồi PLAYING
+
+- resumeToMenu()
+  Chuyển về state MENU (giữ nguyên vị trí rắn) để resume.
+
+- saveHighScore()
+  Lưu điểm cao nếu score > highScore hiện tại.
+
+
+FILE: GameController.java
+------------------------------------------------------------------------
+Mục đích: Điều phối viên trung tâm, khởi tạo và kết nối các thành phần.
+
+Biến thành viên:
+- gameEngine: Logic game
+- gameThread: Thread game loop
+- gestureDetector: Phát hiện cử chỉ
+- context, gameView: Tham chiếu UI
+- isInitialized: Flag đã khởi tạo
+- scoreListener: Callback cập nhật điểm
+
+Phương thức:
+- init(Context context, GameView gameView)
+  Khởi tạo controller:
+  1. Đợi GameView được layout (có kích thước)
+  2. Gọi initGameWithViewSize()
+
+- initGameWithViewSize()
+  Khởi tạo game với kích thước thực của view:
+  1. Tính gridWidth, gridHeight từ view size
+  2. Tạo GameEngine
+  3. Tạo InputHandler và GestureDetector
+  4. Tạo và start GameThread
+
+- start()
+  Set gameThread.running = true (tiếp tục cập nhật game).
+
+- stop()
+  Set gameThread.running = false (dừng cập nhật).
+
+- destroy()
+  Dừng thread hoàn toàn khi thoát app.
+
+- setScoreUpdateListener(ScoreUpdateListener listener)
+  Đăng ký callback nhận thông báo khi điểm thay đổi.
+
+
+==========================================================================
+III. PACKAGE: com.example.btl_snake_game.game.objects
+==========================================================================
+
+FILE: Snake.java
+------------------------------------------------------------------------
+Mục đích: Đối tượng rắn với thân là danh sách các ô.
+
+Biến thành viên:
+- body: List<Vector2D> - Danh sách tọa độ các đốt rắn
+- direction: Vector2D - Hướng di chuyển hiện tại
+- cellSize: Kích thước mỗi ô
+
+Phương thức:
+- Snake(int startX, int startY, int cellSize)
+  Constructor: Tạo rắn với 3 đốt ở vị trí ban đầu, hướng phải.
+
+- move()
+  Di chuyển rắn:
+  1. Tính vị trí đầu mới = đầu cũ + direction
+  2. Thêm đầu mới vào đầu list
+  3. Xóa đuôi (giữ nguyên độ dài)
+
+- grow()
+  Rắn dài thêm 1 đốt:
+  Thêm 1 đốt mới ở đuôi (giữ lại đuôi khi move).
+
+- getHead()
+  Trả về tọa độ đầu rắn (phần tử đầu tiên của list).
+
+- getBody()
+  Trả về toàn bộ thân rắn.
+
+- setDirection(Vector2D dir)
+  Đặt hướng mới (kiểm tra không đi ngược lại).
+
+- checkWallCollision(int gridWidth, int gridHeight)
+  Kiểm tra đầu rắn có ra ngoài biên không.
+
+- checkSelfCollision()
+  Kiểm tra đầu rắn có chạm vào thân không.
+
+
+FILE: Food.java
+------------------------------------------------------------------------
+Mục đích: Đối tượng thức ăn, xuất hiện ngẫu nhiên.
+
+Biến thành viên:
+- position: Vector2D - Tọa độ thức ăn
+- gridWidth, gridHeight, cellSize: Kích thước lưới
+- random: Random generator
+
+Phương thức:
+- Food(int gridWidth, int gridHeight, int cellSize)
+  Constructor: Tạo thức ăn và spawn ở vị trí ngẫu nhiên.
+
+- spawn()
+  Sinh thức ăn ở vị trí ngẫu nhiên trong lưới.
+
+- getPosition()
+  Trả về tọa độ thức ăn.
+
+- isEaten(Vector2D snakeHead)
+  Kiểm tra đầu rắn có trùng vị trí thức ăn không.
+
+
+==========================================================================
+IV. PACKAGE: com.example.btl_snake_game.ui
+==========================================================================
+
+FILE: GameActivity.java
+------------------------------------------------------------------------
+Mục đích: Activity màn hình chơi game chính.
+
+Biến thành viên:
+- controller: GameController điều phối game
+- gameView: View vẽ game
+- tvScore: TextView hiển thị điểm
+- btnPause, btnSound: Các nút điều khiển
+- isPaused, isSoundEnabled: Trạng thái
+
+Phương thức:
+- onCreate(Bundle)
+  Khởi tạo Activity:
+  1. Set layout
+  2. Ẩn system UI (fullscreen)
+  3. Khởi tạo views, assets, game
+  4. Setup listeners
+
+- initGame()
+  Khởi tạo game:
+  1. Tạo GameController
+  2. Đăng ký score listener
+  3. Setup pause và game over listeners
+
+- setupPauseListener()
+  Đăng ký callback từ GameView khi:
+  - onContinue(): Gọi resumeGame()
+  - onReturnToMenu(): Gọi navigateToMenu()
+
+- setupGameOverListener()
+  Đăng ký callback khi game over:
+  - onRestart(): Gọi restartGame()
+  - onReturnToMenu(): Gọi navigateToMenu()
+
+- togglePause()
+  Bật/tắt pause:
+  - Pause: stop controller, hiện popup
+  - Unpause: gọi resumeGame()
+
+- resumeGame()
+  Resume từ pause:
+  1. Đưa về state MENU (hiện tap to start)
+  2. Start controller
+  3. Phát nhạc
+
+- restartGame()
+  Restart game:
+  1. Gọi initGame() trên engine
+  2. Start controller
+
+- navigateToMenu()
+  Chuyển về MenuActivity.
+
+
+FILE: MenuActivity.java
+------------------------------------------------------------------------
+Mục đích: Activity màn hình menu chính.
+
+Biến thành viên:
+- btnPlay, btnSettings, btnExit: Các nút
+- tvHighScore: Hiển thị điểm cao
+- ivLogo: Logo game
+
+Phương thức:
+- onCreate(Bundle)
+  Khởi tạo menu:
+  1. Load assets
+  2. Apply font và hình ảnh
+  3. Setup click listeners
+
+- onResume()
+  Cập nhật high score và phát nhạc menu.
+
+- onPause()
+  Pause nhạc menu.
+
+- applyAssets()
+  Áp dụng font và hình ảnh từ AssetManager.
+
+- updateHighScore()
+  Lấy và hiển thị điểm cao từ SettingManager.
+
+- navigateToGame()
+  Chuyển sang GameActivity.
+
+- navigateToSettings()
+  Chuyển sang SettingActivity.
+
+- exitApp()
+  Thoát ứng dụng.
+
+
+FILE: SettingActivity.java
+------------------------------------------------------------------------
+Mục đích: Activity màn hình cài đặt.
+
+Biến thành viên:
+- rbEasy, rbHard: RadioButton chọn độ khó
+- btnBack: Nút quay lại
+- settingManager: Quản lý cài đặt
+
+Phương thức:
+- onCreate(Bundle)
+  Khởi tạo settings:
+  1. Load cài đặt hiện tại
+  2. Setup radio buttons
+
+- loadSettings()
+  Load độ khó từ SettingManager và chọn radio tương ứng.
+
+- saveDifficulty(int difficulty)
+  Lưu độ khó vào SettingManager.
+
+
+FILE: GameView.java
+------------------------------------------------------------------------
+Mục đích: Custom View vẽ toàn bộ game lên màn hình.
+
+Biến thành viên:
+- gameEngine: Tham chiếu engine để lấy data
+- snakePaint, foodPaint, textPaint: Paint objects cho vẽ
+- isPaused: Trạng thái pause
+- continueButtonRect, menuButtonRect: Vùng nút pause popup
+- restartButtonRect, gameOverMenuButtonRect: Vùng nút game over popup
+- pauseActionListener, gameOverActionListener: Callbacks
+
+Phương thức:
+- onDraw(Canvas canvas)
+  Vẽ game lên canvas mỗi frame:
+  1. Vẽ background (tile game_background)
+  2. Vẽ thức ăn
+  3. Vẽ rắn
+  4. Vẽ màn hình game over nếu cần
+  5. Vẽ màn hình menu nếu cần
+  6. Vẽ pause popup nếu isPaused
+
+- drawBackground(Canvas)
+  Vẽ nền game (tile hình game_background.png).
+
+- drawSnake(Canvas)
+  Vẽ đầu và thân rắn (dùng hình hoặc vẽ hình tròn).
+
+- drawFood(Canvas)
+  Vẽ thức ăn (dùng hình hoặc vẽ hình tròn đỏ).
+
+- drawPausePopup(Canvas)
+  Vẽ popup khi pause:
+  1. Overlay tối
+  2. Box bo góc
+  3. Nút RESUME và MENU
+
+- drawGameOver(Canvas)
+  Vẽ popup khi game over:
+  1. Overlay tối
+  2. "GAME OVER" và Score
+  3. Nút RESTART và MENU
+
+- drawMenu(Canvas)
+  Vẽ màn hình "Tap to Start".
+
+- onTouchEvent(MotionEvent)
+  Xử lý touch:
+  1. Nếu isPaused: kiểm tra click vào nút RESUME/MENU
+  2. Nếu GAME_OVER: kiểm tra click vào nút RESTART/MENU
+
+- setPaused(boolean paused)
+  Set trạng thái pause và invalidate view.
+
+
+FILE: GameThread.java
+------------------------------------------------------------------------
+Mục đích: Thread game loop, cập nhật game theo FPS cố định.
+
+Biến thành viên:
+- gameEngine: Engine để update
+- gameView: View để invalidate
+- running: Flag đang update game hay không
+- alive: Flag thread còn chạy hay không
+- currentFPS, baseFPS: Tốc độ khung hình
+- scoreListener: Callback điểm
+
+Phương thức:
+- GameThread(GameEngine engine, GameView view)
+  Constructor: Thiết lập FPS theo độ khó (Hard: 8, Easy: 5).
+
+- run()
+  Game loop chạy liên tục:
+  while (alive):
+    1. Nếu running: update engine, tính FPS
+    2. Invalidate view
+    3. Sleep để giữ đúng FPS
+
+- setRunning(boolean running)
+  Bật/tắt việc update game (không dừng thread).
+
+- stopThread()
+  Dừng thread hoàn toàn (alive = false).
+
+- setScoreUpdateListener(ScoreUpdateListener)
+  Đăng ký callback nhận thông báo điểm.
+
+
+FILE: InputHandler.java
+------------------------------------------------------------------------
+Mục đích: Xử lý cử chỉ vuốt và tap từ người dùng.
+
+Biến thành viên:
+- gameEngine: Tham chiếu engine
+- cellSize: Kích thước ô
+- SWIPE_THRESHOLD: Ngưỡng vuốt tối thiểu
+
+Phương thức:
+- onDown(MotionEvent)
+  Luôn return true để nhận các event tiếp theo.
+
+- onSingleTapUp(MotionEvent)
+  Xử lý tap:
+  - Nếu state = MENU: gọi startGame()
+
+- onFling(MotionEvent e1, MotionEvent e2, float vX, float vY)
+  Xử lý vuốt:
+  1. Tính chênh lệch X, Y
+  2. Xác định hướng vuốt (lên/xuống/trái/phải)
+  3. Gọi changeDirection() với hướng tương ứng
+
+
+==========================================================================
+V. PACKAGE: com.example.btl_snake_game.util
+==========================================================================
+
+FILE: Vector2D.java
+------------------------------------------------------------------------
+Mục đích: Lớp tiện ích biểu diễn điểm/vector 2D.
+
+Biến thành viên:
+- x, y: Tọa độ
+
+Phương thức:
+- Vector2D(int x, int y): Constructor
+- getX(), setX(int): Getter/setter cho x
+- getY(), setY(int): Getter/setter cho y
+- equals(Object): So sánh 2 vector
+- hashCode(): Hash cho sử dụng trong collections
+
+
+FILE: AssetManager.java
+------------------------------------------------------------------------
+Mục đích: Load và quản lý tài nguyên (hình ảnh, font) từ assets.
+
+Biến static:
+- snakeHead, snakeBody, food: Bitmap sprites
+- button, gameBackground, menuBackground: Bitmap UI
+- pauseIcon, volumeIcon, snakeLogo, snakeTitle: Bitmap icons
+- gameFont: Typeface font game
+
+Phương thức:
+- loadAllAssets()
+  Load tất cả tài nguyên:
+  1. Load các sprite game
+  2. Load các hình UI
+  3. Load font
+
+- loadBitmap(String fileName)
+  Load 1 file bitmap từ assets/images/.
+
+- loadFont(String fileName)
+  Load 1 file font từ assets/fonts/.
+
+
+FILE: SettingManager.java
+------------------------------------------------------------------------
+Mục đích: Lưu trữ cài đặt người dùng (Singleton Pattern).
+
+Biến thành viên:
+- instance: Static instance duy nhất
+- prefs: SharedPreferences để lưu trữ
+- Các key constants: HIGH_SCORE_KEY, SOUND_ENABLED_KEY, DIFFICULTY_KEY
+
+Phương thức:
+- getInstance()
+  Trả về instance duy nhất (tạo nếu chưa có).
+
+- init(Context context)
+  Khởi tạo SharedPreferences.
+
+- getHighScore(), setHighScore(int)
+  Đọc/ghi điểm cao.
+
+- isSoundEnabled(), setSoundEnabled(boolean)
+  Đọc/ghi trạng thái âm thanh.
+
+- getDifficulty(), setDifficulty(int)
+  Đọc/ghi độ khó (0 = Easy, 1 = Hard).
+
+- isHardMode()
+  Trả về true nếu đang ở Hard mode.
+
+
+FILE: SoundManager.java
+------------------------------------------------------------------------
+Mục đích: Quản lý âm thanh game (Singleton Pattern).
+
+Biến thành viên:
+- instance: Static instance duy nhất
+- menuMusicPlayer, gameMusicPlayer: MediaPlayer cho nhạc nền
+- soundPool: SoundPool cho hiệu ứng ngắn
+- sfxEatId, sfxDieId: ID của sound effects
+
+Phương thức:
+- getInstance()
+  Trả về instance duy nhất.
+
+- init(Context context)
+  Khởi tạo:
+  1. Tạo SoundPool
+  2. Load các sound effects từ assets
+
+- playMenuMusic(), stopMenuMusic()
+  Phát/dừng nhạc menu (01 The Piano.mp3).
+
+- playGameMusic(), stopGameMusic()
+  Phát/dừng nhạc game (02 99 Problems.mp3).
+
+- playEatSound()
+  Phát hiệu ứng ăn mồi (sfx_eat.wav).
+
+- playDieSound()
+  Phát hiệu ứng chết (sfx_die.wav).
+
+- pauseAll()
+  Pause tất cả nhạc.
+
+- resumeMusic(boolean isInGame)
+  Resume nhạc (menu hoặc game).
+
+- toggleSound(boolean enabled)
+  Bật/tắt âm thanh.
+
+- release()
+  Giải phóng tài nguyên.
+
+
+==========================================================================
+VI. CÁC FILE LAYOUT (XML)
+==========================================================================
+
+FILE: activity_menu.xml
+------------------------------------------------------------------------
+Layout màn hình menu với:
+- ConstraintLayout với background
+- ImageView cho logo
+- TextView cho title và high score
+- 3 Button: Play, Settings, Exit
+
+
+FILE: activity_game.xml
+------------------------------------------------------------------------
+Layout màn hình game với:
+- RelativeLayout chứa:
+  - Top bar: điểm số, nút pause, nút sound
+  - GameView (custom view) vẽ game
+
+
+FILE: activity_settings.xml
+------------------------------------------------------------------------
+Layout màn hình cài đặt với:
+- Title "Settings"
+- RadioGroup chọn độ khó (Easy/Hard)
+- Button quay lại
+
+
+==========================================================================
+VII. LUỒNG HOẠT ĐỘNG CHÍNH
+==========================================================================
+
+1. KHỞI ĐỘNG APP:
+   MainActivity -> MenuActivity (phát nhạc menu)
+
+2. BẮT ĐẦU CHƠI:
+   MenuActivity [Play] -> GameActivity
+   -> GameController.init() -> GameEngine + GameThread
+   -> Hiện "Tap to Start"
+   -> User tap -> GameEngine.startGame() -> state = PLAYING
+   -> GameThread cập nhật liên tục
+
+3. ĐANG CHƠI:
+   GameThread.run():
+   - gameEngine.update() (di chuyển, va chạm)
+   - gameView.postInvalidate() (vẽ lại)
+   - Repeat theo FPS
+
+4. PAUSE:
+   User [Pause] -> togglePause()
+   -> controller.stop() (running = false)
+   -> gameView.setPaused(true) -> vẽ popup
+   
+   User [RESUME] -> resumeGame()
+   -> resumeToMenu() -> state = MENU
+   -> controller.start() (running = true)
+   -> Hiện "Tap to Start"
+   -> User tap -> PLAYING
+
+5. GAME OVER:
+   Va chạm -> state = GAME_OVER
+   -> Vẽ popup RESTART/MENU
+   
+   User [RESTART] -> restartGame()
+   -> initGame() -> state = PLAYING
+   
+   User [MENU] -> navigateToMenu()
+
+
+==========================================================================
+                           HẾT TÀI LIỆU
+==========================================================================
