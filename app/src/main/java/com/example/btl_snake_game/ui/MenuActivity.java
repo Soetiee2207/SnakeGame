@@ -74,18 +74,14 @@ public class MenuActivity extends AppCompatActivity {
         SettingManager.getInstance().init(this);
         SoundManager.getInstance().init(this);
         
-        // Load snake assets based on saved color preference
         int snakeColor = SettingManager.getInstance().getSnakeColor();
         assetManager.loadSnakeAssetsByColor(snakeColor);
         
         updateHighScore();
-
-        // Apply assets to UI
         applyAssets();
     }
 
     private void applyAssets() {
-        // Apply font
         if (AssetManager.gameFont != null) {
             tvGameTitle.setTypeface(AssetManager.gameFont);
             tvHighScore.setTypeface(AssetManager.gameFont);
@@ -94,17 +90,14 @@ public class MenuActivity extends AppCompatActivity {
             btnExit.setTypeface(AssetManager.gameFont);
         }
 
-        // Apply background
         if (AssetManager.menuBackground != null) {
             rootLayout.setBackground(new BitmapDrawable(getResources(), AssetManager.menuBackground));
         }
 
-        // Apply logo
         if (AssetManager.snakeLogo != null) {
             ivLogo.setImageBitmap(AssetManager.snakeLogo);
         }
 
-        // Apply button backgrounds
         if (AssetManager.button != null) {
             btnPlay.setBackground(new BitmapDrawable(getResources(), AssetManager.button));
             btnSettings.setBackground(new BitmapDrawable(getResources(), AssetManager.button));
@@ -135,35 +128,5 @@ public class MenuActivity extends AppCompatActivity {
 
     private void exitApp() {
         finishAffinity();
-    }
-
-    public void setLogoImage(Bitmap bitmap) {
-        if (bitmap != null && ivLogo != null) {
-            ivLogo.setImageBitmap(bitmap);
-        }
-    }
-
-    public void setPlayButtonBackground(Bitmap bitmap) {
-        if (bitmap != null && btnPlay != null) {
-            btnPlay.setBackground(new BitmapDrawable(getResources(), bitmap));
-        }
-    }
-
-    public void setSettingsButtonBackground(Bitmap bitmap) {
-        if (bitmap != null && btnSettings != null) {
-            btnSettings.setBackground(new BitmapDrawable(getResources(), bitmap));
-        }
-    }
-
-    public void setExitButtonBackground(Bitmap bitmap) {
-        if (bitmap != null && btnExit != null) {
-            btnExit.setBackground(new BitmapDrawable(getResources(), bitmap));
-        }
-    }
-
-    public void setMenuBackground(Bitmap bitmap) {
-        if (bitmap != null && rootLayout != null) {
-            rootLayout.setBackground(new BitmapDrawable(getResources(), bitmap));
-        }
     }
 }

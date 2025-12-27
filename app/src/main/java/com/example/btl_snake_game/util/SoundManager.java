@@ -10,11 +10,9 @@ public class SoundManager {
     private static SoundManager instance;
     private Context context;
     
-    // Background music players
     private MediaPlayer menuMusicPlayer;
     private MediaPlayer gameMusicPlayer;
     
-    // Sound effects
     private SoundPool soundPool;
     private int sfxEatId;
     private int sfxDieId;
@@ -67,7 +65,6 @@ public class SoundManager {
         }
     }
     
-    // Menu background music
     public void playMenuMusic() {
         if (!SettingManager.getInstance().isSoundEnabled()) return;
         
@@ -100,7 +97,6 @@ public class SoundManager {
         }
     }
     
-    // Game background music
     public void playGameMusic() {
         if (!SettingManager.getInstance().isSoundEnabled()) return;
         
@@ -133,7 +129,6 @@ public class SoundManager {
         }
     }
     
-    // Sound effects
     public void playEatSound() {
         if (!SettingManager.getInstance().isSoundEnabled()) return;
         if (sfxLoaded && soundPool != null) {
@@ -148,7 +143,6 @@ public class SoundManager {
         }
     }
     
-    // Pause/Resume all
     public void pauseAll() {
         if (menuMusicPlayer != null && menuMusicPlayer.isPlaying()) {
             menuMusicPlayer.pause();
@@ -172,7 +166,6 @@ public class SoundManager {
         }
     }
     
-    // Release resources
     public void release() {
         if (menuMusicPlayer != null) {
             menuMusicPlayer.release();
@@ -188,7 +181,6 @@ public class SoundManager {
         }
     }
     
-    // Toggle sound on/off
     public void toggleSound(boolean enabled) {
         if (!enabled) {
             pauseAll();

@@ -23,16 +23,6 @@ public class InputHandler extends GestureDetector.SimpleOnGestureListener {
     }
 
     @Override
-    public boolean onSingleTapUp(MotionEvent e) {
-        GameState state = gameEngine.getState();
-        if (state == GameState.MENU) {
-            gameEngine.startGame();
-            return true;
-        }
-        return false;
-    }
-
-    @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2,
                            float velocityX, float velocityY) {
         if (gameEngine.getState() != GameState.PLAYING) {
@@ -43,27 +33,21 @@ public class InputHandler extends GestureDetector.SimpleOnGestureListener {
         float diffY = e2.getY() - e1.getY();
 
         if (Math.abs(diffX) > Math.abs(diffY)) {
-            // Vuốt ngang
             if (Math.abs(diffX) > SWIPE_THRESHOLD &&
                     Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
                 if (diffX > 0) {
-                    // Vuốt phải
                     gameEngine.changeDirection(new Vector2D(cellSize, 0));
                 } else {
-                    // Vuốt trái
                     gameEngine.changeDirection(new Vector2D(-cellSize, 0));
                 }
                 return true;
             }
         } else {
-            // Vuốt dọc
             if (Math.abs(diffY) > SWIPE_THRESHOLD &&
                     Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
                 if (diffY > 0) {
-                    // Vuốt xuống
                     gameEngine.changeDirection(new Vector2D(0, cellSize));
                 } else {
-                    // Vuốt lên
                     gameEngine.changeDirection(new Vector2D(0, -cellSize));
                 }
                 return true;

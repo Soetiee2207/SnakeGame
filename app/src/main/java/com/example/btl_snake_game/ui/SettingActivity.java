@@ -76,12 +76,10 @@ public class SettingActivity extends AppCompatActivity {
         settingManager = SettingManager.getInstance();
         settingManager.init(this);
 
-        // Apply assets to UI
         applyAssets();
     }
 
     private void applyAssets() {
-        // Apply font
         if (AssetManager.gameFont != null) {
             tvSettingsTitle.setTypeface(AssetManager.gameFont);
             tvDifficultyLabel.setTypeface(AssetManager.gameFont);
@@ -94,14 +92,12 @@ public class SettingActivity extends AppCompatActivity {
             btnBack.setTypeface(AssetManager.gameFont);
         }
 
-        // Apply button background
         if (AssetManager.button != null) {
             btnBack.setBackground(new android.graphics.drawable.BitmapDrawable(getResources(), AssetManager.button));
         }
     }
 
     private void loadSettings() {
-        // Load difficulty
         int difficulty = getDifficulty();
         if (difficulty == DIFFICULTY_EASY) {
             rbEasy.setChecked(true);
@@ -109,7 +105,6 @@ public class SettingActivity extends AppCompatActivity {
             rbHard.setChecked(true);
         }
 
-        // Load snake color
         int snakeColor = settingManager.getSnakeColor();
         switch (snakeColor) {
             case SettingManager.COLOR_GREEN:
@@ -136,13 +131,10 @@ public class SettingActivity extends AppCompatActivity {
 
         rgSnakeColor.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId == R.id.rb_blue) {
-                android.util.Log.d("SettingActivity", "Snake color changed to BLUE (0)");
                 settingManager.setSnakeColor(SettingManager.COLOR_BLUE);
             } else if (checkedId == R.id.rb_green) {
-                android.util.Log.d("SettingActivity", "Snake color changed to GREEN (1)");
                 settingManager.setSnakeColor(SettingManager.COLOR_GREEN);
             } else if (checkedId == R.id.rb_purple) {
-                android.util.Log.d("SettingActivity", "Snake color changed to PURPLE (2)");
                 settingManager.setSnakeColor(SettingManager.COLOR_PURPLE);
             }
         });
@@ -160,34 +152,5 @@ public class SettingActivity extends AppCompatActivity {
 
     private void navigateBack() {
         finish();
-    }
-
-    public void setSettingsBackground(Bitmap bitmap) {
-        if (bitmap != null && rootLayout != null) {
-            rootLayout.setBackground(new BitmapDrawable(getResources(), bitmap));
-        }
-    }
-
-    public void setBackButtonBackground(Bitmap bitmap) {
-        if (bitmap != null && btnBack != null) {
-            btnBack.setBackground(new BitmapDrawable(getResources(), bitmap));
-        }
-    }
-
-    public void setTitleTextColor(int color) {
-        if (tvSettingsTitle != null) {
-            tvSettingsTitle.setTextColor(color);
-        }
-    }
-
-    public void setDifficultyLabelTextColor(int color) {
-        if (tvDifficultyLabel != null) {
-            tvDifficultyLabel.setTextColor(color);
-        }
-    }
-
-    public static int getDifficultyFromPrefs(android.content.Context context) {
-        return context.getSharedPreferences("SnakeGamePrefs", MODE_PRIVATE)
-                .getInt(DIFFICULTY_KEY, DIFFICULTY_EASY);
     }
 }

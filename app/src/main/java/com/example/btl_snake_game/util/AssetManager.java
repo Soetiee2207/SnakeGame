@@ -10,7 +10,6 @@ import java.io.InputStream;
 public class AssetManager {
     private final Context context;
 
-    // Lưu trữ các Bitmap để dùng nhiều lần
     public static Bitmap snakeHead;
     public static Bitmap snakeBody;
     public static Bitmap food;
@@ -23,7 +22,6 @@ public class AssetManager {
     public static Bitmap snakeLogo;
     public static Bitmap snakeTitle;
 
-    // Font
     public static Typeface gameFont;
 
     public AssetManager(Context context) {
@@ -52,10 +50,7 @@ public class AssetManager {
     }
 
     public void loadAllAssets() {
-        // Load food sprite
         food = loadBitmap("food.png");
-
-        // Load UI elements
         button = loadBitmap("button.png");
         gameBackground = loadBitmap("game_background.png");
         menuBackground = loadBitmap("menu_background.png");
@@ -64,11 +59,7 @@ public class AssetManager {
         muteIcon = loadBitmap("mute_game.png");
         snakeLogo = loadBitmap("snake_logo.png");
         snakeTitle = loadBitmap("snake_title.png");
-
-        // Load font
         gameFont = loadFont("yoster.ttf");
-        
-        // NOTE: Snake head/body are NOT loaded here - use loadSnakeAssetsByColor() instead
     }
 
     public void loadSnakeAssetsByColor(int color) {
@@ -85,13 +76,7 @@ public class AssetManager {
                 colorName = "blue";
                 break;
         }
-        android.util.Log.d("AssetManager", "Loading snake assets: " + colorName);
         snakeHead = loadBitmap("snake_head_" + colorName + ".png");
         snakeBody = loadBitmap("snake_body_" + colorName + ".png");
-        android.util.Log.d("AssetManager", "snakeHead loaded: " + (snakeHead != null) + ", snakeBody loaded: " + (snakeBody != null));
-    }
-
-    public static Typeface getGameFont() {
-        return gameFont != null ? gameFont : Typeface.DEFAULT;
     }
 }

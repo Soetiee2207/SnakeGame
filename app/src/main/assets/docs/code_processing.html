@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Processing - Snake Game</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a2e;
+            color: #eee;
+        }
+
+        h1 {
+            color: #4ade80;
+            border-bottom: 3px solid #4ade80;
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            color: #60a5fa;
+            margin-top: 40px;
+            border-left: 4px solid #60a5fa;
+            padding-left: 15px;
+        }
+
+        h3 {
+            color: #f472b6;
+        }
+
+        .package {
+            background: #16213e;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .file {
+            background: #0f3460;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .file-name {
+            color: #fbbf24;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .method {
+            background: #1a1a40;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 5px;
+            border-left: 3px solid #22c55e;
+        }
+
+        .method-name {
+            color: #22c55e;
+            font-weight: bold;
+        }
+
+        .field {
+            color: #a78bfa;
+        }
+
+        code {
+            background: #2d2d44;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Consolas', monospace;
+        }
+
+        .flow {
+            background: linear-gradient(135deg, #1e3a5f 0%, #16213e 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .arrow {
+            color: #4ade80;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th,
+        td {
+            border: 1px solid #3b82f6;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background: #1e40af;
+        }
+
+        .highlight {
+            background: #fbbf24;
+            color: #000;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>🐍 Tài Liệu Xử Lý Code - Snake Game</h1>
+
+    <p>Tài liệu này mô tả chi tiết cách xử lý và luồng hoạt động của toàn bộ mã nguồn trong dự án Snake Game.</p>
+
+    <h2>📁 Cấu Trúc Dự Án</h2>
+
+    <div class="package">
+        <pre>
+com.example.btl_snake_game/
+├── MainActivity.java           (Entry point - không sử dụng)
+├── game/
+│   ├── GameController.java     (Điều khiển game loop)
+│   ├── GameEngine.java         (Logic game chính)
+│   ├── GameState.java          (Enum trạng thái)
+│   └── objects/
+│       ├── Snake.java          (Đối tượng rắn)
+│       └── Food.java           (Đối tượng thức ăn)
+├── ui/
+│   ├── MenuActivity.java       (Màn hình menu)
+│   ├── GameActivity.java       (Màn hình chơi game)
+│   ├── SettingActivity.java    (Màn hình cài đặt)
+│   ├── GameView.java           (Custom View vẽ game)
+│   ├── GameThread.java         (Thread cập nhật game)
+│   └── InputHandler.java       (Xử lý vuốt màn hình)
+└── util/
+    ├── AssetManager.java       (Quản lý tài nguyên)
+    ├── SettingManager.java     (Quản lý cài đặt)
+    ├── SoundManager.java       (Quản lý âm thanh)
+    └── Vector2D.java           (Đối tượng tọa độ 2D)
+</pre>
+    </div>
+
+    <h2>🔄 Luồng Khởi Động Ứng Dụng</h2>
+
+    <div class="flow">
+        <p><strong>1. MenuActivity.onCreate()</strong></p>
+        <p class="arrow">↓</p>
+        <p><strong>2. initAssetManager()</strong> → Load tất cả assets (images, fonts)</p>
+        <p class="arrow">↓</p>
+        <p><strong>3. SettingManager.init()</strong> → Đọc preferences từ SharedPreferences</p>
+        <p class="arrow">↓</p>
+        <p><strong>4. SoundManager.init()</strong> → Khởi tạo MediaPlayer và SoundPool</p>
+        <p class="arrow">↓</p>
+        <p><strong>5. loadSnakeAssetsByColor()</strong> → Load hình rắn theo màu đã chọn</p>
+        <p class="arrow">↓</p>
+        <p><strong>6. applyAssets()</strong> → Áp dụng font và background vào UI</p>
+    </div>
+
+    <h2>📦 Package: game</h2>
+
+    <div class="package">
+
+        <div class="file">
+            <p class="file-name">GameState.java</p>
+            <p>Enum định nghĩa các trạng thái của game:</p>
+            <table>
+                <tr>
+                    <th>State</th>
+                    <th>Mô tả</th>
+                </tr>
+                <tr>
+                    <td><code>MENU</code></td>
+                    <td>Đang ở màn hình bắt đầu, chờ tap để chơi</td>
+                </tr>
+                <tr>
+                    <td><code>PLAYING</code></td>
+                    <td>Đang chơi game</td>
+                </tr>
+                <tr>
+                    <td><code>PAUSED</code></td>
+                    <td>Game tạm dừng</td>
+                </tr>
+                <tr>
+                    <td><code>GAME_OVER</code></td>
+                    <td>Game kết thúc, hiển thị điểm</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="file">
+            <p class="file-name">GameEngine.java</p>
+            <p>Lớp chính xử lý logic game. Chịu trách nhiệm cập nhật trạng thái game mỗi frame.</p>
+
+            <div class="method">
+                <p class="method-name">GameEngine(gridWidth, gridHeight, cellSize)</p>
+                <p>Constructor - Khởi tạo game với kích thước lưới và ô.</p>
+            </div>
+
+            <div class="method">
+                <p class="method-name">initGame()</p>
+                <p>Reset game: tạo Snake mới ở giữa màn hình, spawn Food, đặt score = 0.</p>
+            </div>
+
+            <div class="method">
+                <p class="method-name">update()</p>
+                <p><strong>Logic chính mỗi frame:</strong></p>
+                <ol>
+                    <li>Kiểm tra state == PLAYING, nếu không thì return</li>
+                    <li>Di chuyển rắn: <code>snake.move()</code></li>
+                    <li>Kiểm tra chế độ Hard:
+                        <ul>
+                            <li>Hard: va tường → GAME_OVER</li>
+                            <li>Easy: wrap position (xuyên tường)</li>
+                        </ul>
+                    </li>
+                    <li>Kiểm tra ăn thức ăn: <code>food.isEaten(snake.getHead())</code>
+                        <ul>
+                            <li>Nếu ăn: grow(), score += 10, spawn food mới</li>
+                        </ul>
+                    </li>
+                    <li>Kiểm tra tự cắn: <code>snake.checkSelfCollision()</code> → GAME_OVER</li>
+                </ol>
+            </div>
+
+            <div class="method">
+                <p class="method-name">wrapSnakePosition()</p>
+                <p>Xử lý rắn đi xuyên tường (chế độ Easy): nếu head vượt biên thì đặt lại ở phía đối diện.</p>
+            </div>
+
+            <div class="method">
+                <p class="method-name">changeDirection(Vector2D)</p>
+                <p>Thay đổi hướng di chuyển của rắn (được gọi từ InputHandler).</p>
+            </div>
+        </div>
+
+        <div class="file">
+            <p class="file-name">GameController.java</p>
+            <p>Lớp điều phối giữa GameEngine, GameView và GameThread.</p>
+
+            <div class="method">
+                <p class="method-name">init(Context, GameView)</p>
+                <p><strong>Quy trình khởi tạo:</strong></p>
+                <ol>
+                    <li>Chờ view có kích thước (ViewTreeObserver)</li>
+                    <li>Tính gridWidth/gridHeight từ view size và CELL_SIZE</li>
+                    <li>Tạo GameEngine với kích thước đã tính</li>
+                    <li>Gắn GameEngine vào GameView</li>
+                    <li>Tạo InputHandler và GestureDetector</li>
+                    <li>Tạo và start GameThread</li>
+                </ol>
+            </div>
+
+            <div class="method">
+                <p class="method-name">start() / stop()</p>
+                <p>Bắt đầu/dừng GameThread.setRunning(true/false).</p>
+            </div>
+        </div>
+
+    </div>
+
+    <h2>📦 Package: game.objects</h2>
+
+    <div class="package">
+
+        <div class="file">
+            <p class="file-name">Snake.java</p>
+            <p>Đối tượng rắn - quản lý vị trí và di chuyển.</p>
+
+            <p class="field"><strong>Fields:</strong></p>
+            <ul>
+                <li><code>List&lt;Vector2D&gt; body</code> - Danh sách các đốt (index 0 = đầu)</li>
+                <li><code>Vector2D direction</code> - Hướng hiện tại</li>
+                <li><code>Vector2D nextDirection</code> - Hướng sẽ đổi ở frame tiếp</li>
+                <li><code>boolean growing</code> - Flag đánh dấu sắp mọc thêm đốt</li>
+            </ul>
+
+            <div class="method">
+                <p class="method-name">move()</p>
+                <p><strong>Thuật toán di chuyển:</strong></p>
+                <ol>
+                    <li>Cập nhật direction = nextDirection</li>
+                    <li>Tính vị trí head mới = head cũ + direction</li>
+                    <li>Thêm head mới vào đầu list</li>
+                    <li>Nếu không growing: xóa đốt cuối (đuôi)</li>
+                    <li>Nếu growing: giữ nguyên đuôi → rắn dài thêm</li>
+                </ol>
+            </div>
+
+            <div class="method">
+                <p class="method-name">setDirection(Vector2D)</p>
+                <p>Chỉ đổi hướng nếu không đi ngược lại (tránh tự cắn ngay).</p>
+                <p>Điều kiện: <code>direction.x + newDir.x != 0 || direction.y + newDir.y != 0</code></p>
+            </div>
+
+            <div class="method">
+                <p class="method-name">checkSelfCollision()</p>
+                <p>Duyệt từ body[1] đến cuối, so sánh với head. Nếu trùng → return true.</p>
+            </div>
+
+            <div class="method">
+                <p class="method-name">checkWallCollision(gridWidth, gridHeight)</p>
+                <p>Kiểm tra head có nằm ngoài biên không.</p>
+            </div>
+        </div>
+
+        <div class="file">
+            <p class="file-name">Food.java</p>
+            <p>Đối tượng thức ăn - spawn ngẫu nhiên trên lưới.</p>
+
+            <div class="method">
+                <p class="method-name">spawn()</p>
+                <p>Random vị trí x, y trong phạm vi grid, nhân với cellSize.</p>
+            </div>
+
+            <div class="method">
+                <p class="method-name">isEaten(Vector2D snakeHead)</p>
+                <p>So sánh position với snakeHead, return true nếu trùng.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <h2>📦 Package: ui</h2>
+
+    <div class="package">
+
+        <div class="file">
+            <p class="file-name">MenuActivity.java</p>
+            <p>Màn hình menu chính với các nút PLAY, SETTINGS, EXIT.</p>
+
+            <div class="method">
+                <p class="method-name">initAssetManager()</p>
+                <p>Load assets, init managers, load snake theo màu đã lưu, apply fonts/backgrounds.</p>
+            </div>
+
+            <div class="method">
+                <p class="method-name">navigateToGame()</p>
+                <p>Tạo Intent và startActivity(GameActivity).</p>
+            </div>
+        </div>
+
+        <div class="file">
+            <p class="file-name">GameActivity.java</p>
+            <p>Activity chính khi chơi game.</p>
+
+            <div class="method">
+                <p class="method-name">initAssetManager()</p>
+                <p><strong>Quy trình:</strong></p>
+                <ol>
+                    <li>Init SettingManager</li>
+                    <li>Load all assets</li>
+                    <li>Load snake assets theo màu đã chọn</li>
+                    <li>Apply assets to UI</li>
+                </ol>
+            </div>
+
+            <div class="method">
+                <p class="method-name">toggleSound()</p>
+                <p>Đảo trạng thái âm thanh, lưu vào SettingManager, cập nhật icon (volume/mute).</p>
+            </div>
+
+            <div class="method">
+                <p class="method-name">updateSoundButtonState()</p>
+                <p>Hiển thị icon volumeIcon hoặc muteIcon tùy vào isSoundEnabled.</p>
+            </div>
+        </div>
+
+        <div class="file">
+            <p class="file-name">SettingActivity.java</p>
+            <p>Màn hình cài đặt với lựa chọn độ khó và màu rắn.</p>
+
+            <div class="method">
+                <p class="method-name">loadSettings()</p>
+                <p>Đọc difficulty và snakeColor từ SettingManager, check radio button tương ứng.</p>
+            </div>
+
+            <div class="method">
+                <p class="method-name">setupClickListeners()</p>
+                <p>Gắn OnCheckedChangeListener cho RadioGroup difficulty và snakeColor.</p>
+                <p>Khi user chọn → gọi <code>settingManager.setDifficulty()</code> hoặc <code>setSnakeColor()</code>.
+                </p>
+            </div>
+        </div>
+
+        <div class="file">
+            <p class="file-name">GameView.java</p>
+            <p>Custom View vẽ toàn bộ game bằng Canvas.</p>
+
+            <div class="method">
+                <p class="method-name">onDraw(Canvas)</p>
+                <p><strong>Thứ tự vẽ:</strong></p>
+                <ol>
+                    <li>drawBackground() - Vẽ background tile</li>
+                    <li>drawFood() - Vẽ thức ăn</li>
+                    <li>drawSnake() - Vẽ từng đốt rắn</li>
+                    <li>Nếu GAME_OVER → drawGameOver()</li>
+                    <li>Nếu MENU → drawMenu()</li>
+                    <li>Nếu isPaused → drawPausePopup()</li>
+                </ol>
+            </div>
+
+            <div class="method">
+                <p class="method-name">drawSnake(Canvas)</p>
+                <p>Duyệt body list:</p>
+                <ul>
+                    <li>Index 0 (đầu): gọi drawRotatedHead() để xoay ảnh theo hướng</li>
+                    <li>Index 1+ (thân): vẽ bitmap bình thường</li>
+                </ul>
+            </div>
+
+            <div class="method">
+                <p class="method-name">drawRotatedHead(Canvas, Bitmap, position, direction, cellSize)</p>
+                <p>Tính góc xoay dựa trên direction vector, dùng canvas.rotate() trước khi vẽ.</p>
+            </div>
+
+            <div class="method">
+                <p class="method-name">onTouchEvent(MotionEvent)</p>
+                <p>Xử lý touch khi đang pause hoặc game over để nhấn các nút popup.</p>
+            </div>
+        </div>
+
+        <div class="file">
+            <p class="file-name">GameThread.java</p>
+            <p>Thread riêng chạy game loop.</p>
+
+            <div class="method">
+                <p class="method-name">run()</p>
+                <p><strong>Game loop:</strong></p>
+                <pre>
+while (alive) {
+    startTime = currentTime
+    if (running) {
+        gameEngine.update()
+        check & notify score change
+        increase FPS based on score
+    }
+    gameView.postInvalidate()
+    sleep(frameTime - elapsed)
+}
+</pre>
+                <p>FPS tăng dần: baseFPS + score/50, max 15 FPS.</p>
+            </div>
+        </div>
+
+        <div class="file">
+            <p class="file-name">InputHandler.java</p>
+            <p>Xử lý cử chỉ vuốt màn hình.</p>
+
+            <div class="method">
+                <p class="method-name">onFling(e1, e2, velocityX, velocityY)</p>
+                <p><strong>Logic phát hiện hướng vuốt:</strong></p>
+                <ol>
+                    <li>Tính diffX = e2.x - e1.x, diffY = e2.y - e1.y</li>
+                    <li>Nếu |diffX| > |diffY|: vuốt ngang
+                        <ul>
+                            <li>diffX > 0 → RIGHT</li>
+                            <li>diffX < 0 → LEFT</li>
+                        </ul>
+                    </li>
+                    <li>Ngược lại: vuốt dọc
+                        <ul>
+                            <li>diffY > 0 → DOWN</li>
+                            <li>diffY < 0 → UP</li>
+                        </ul>
+                    </li>
+                    <li>Gọi gameEngine.changeDirection(Vector2D)</li>
+                </ol>
+            </div>
+        </div>
+
+    </div>
+
+    <h2>📦 Package: util</h2>
+
+    <div class="package">
+
+        <div class="file">
+            <p class="file-name">AssetManager.java</p>
+            <p>Quản lý load và lưu trữ tài nguyên (static fields).</p>
+
+            <div class="method">
+                <p class="method-name">loadAllAssets()</p>
+                <p>Load: food, button, backgrounds, icons, logo, font từ assets/images và assets/fonts.</p>
+            </div>
+
+            <div class="method">
+                <p class="method-name">loadSnakeAssetsByColor(int color)</p>
+                <p>Load snake_head_[color].png và snake_body_[color].png dựa vào COLOR_BLUE/GREEN/PURPLE.</p>
+            </div>
+
+            <div class="method">
+                <p class="method-name">loadBitmap(String fileName)</p>
+                <p>Mở InputStream từ assets/images/, decode thành Bitmap.</p>
+            </div>
+        </div>
+
+        <div class="file">
+            <p class="file-name">SettingManager.java</p>
+            <p>Singleton quản lý SharedPreferences.</p>
+
+            <p class="field"><strong>Keys lưu trữ:</strong></p>
+            <table>
+                <tr>
+                    <th>Key</th>
+                    <th>Type</th>
+                    <th>Default</th>
+                </tr>
+                <tr>
+                    <td>highScore</td>
+                    <td>int</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td>soundEnabled</td>
+                    <td>boolean</td>
+                    <td>true</td>
+                </tr>
+                <tr>
+                    <td>difficulty</td>
+                    <td>int</td>
+                    <td>EASY (0)</td>
+                </tr>
+                <tr>
+                    <td>snakeColor</td>
+                    <td>int</td>
+                    <td>BLUE (0)</td>
+                </tr>
+            </table>
+
+            <p class="field"><strong>Constants:</strong></p>
+            <ul>
+                <li>DIFFICULTY_EASY = 0, DIFFICULTY_HARD = 1</li>
+                <li>COLOR_BLUE = 0, COLOR_GREEN = 1, COLOR_PURPLE = 2</li>
+            </ul>
+        </div>
+
+        <div class="file">
+            <p class="file-name">SoundManager.java</p>
+            <p>Singleton quản lý âm thanh background music và sound effects.</p>
+
+            <p class="field"><strong>Components:</strong></p>
+            <ul>
+                <li><code>MediaPlayer menuMusicPlayer</code> - Nhạc nền menu</li>
+                <li><code>MediaPlayer gameMusicPlayer</code> - Nhạc nền game</li>
+                <li><code>SoundPool</code> - Chơi sound effects (eat, die)</li>
+            </ul>
+
+            <div class="method">
+                <p class="method-name">playMenuMusic() / playGameMusic()</p>
+                <p>Dừng nhạc khác, khởi tạo MediaPlayer nếu chưa có, setLooping(true), start().</p>
+            </div>
+
+            <div class="method">
+                <p class="method-name">playEatSound() / playDieSound()</p>
+                <p>Chơi sound effect từ SoundPool nếu đã load xong.</p>
+            </div>
+        </div>
+
+        <div class="file">
+            <p class="file-name">Vector2D.java</p>
+            <p>Lớp đơn giản biểu diễn tọa độ 2D (x, y).</p>
+            <p>Override equals() và hashCode() để so sánh vị trí.</p>
+        </div>
+
+    </div>
+
+    <h2>🎮 Luồng Chơi Game Chi Tiết</h2>
+
+    <div class="flow">
+        <h3>1. Khởi động game</h3>
+        <p>User nhấn PLAY → GameActivity.onCreate() → initAssetManager() → initGame() → GameController.init() →
+            GameThread.start()</p>
+
+        <h3>2. Game loop (GameThread.run())</h3>
+        <pre>
+while (alive) {
+    if (running) {
+        GameEngine.update()
+            → Snake.move()
+            → Check wall/self collision
+            → Check food eaten
+        GameView.postInvalidate() → onDraw()
+    }
+    sleep(frameTime)
+}
+</pre>
+
+        <h3>3. Xử lý input (user vuốt)</h3>
+        <p>onTouchEvent() → GestureDetector → InputHandler.onFling() → GameEngine.changeDirection() →
+            Snake.setDirection()</p>
+
+        <h3>4. Vẽ frame (GameView.onDraw())</h3>
+        <p>drawBackground() → drawFood() → drawSnake() → [drawGameOver/drawMenu/drawPausePopup nếu cần]</p>
+
+        <h3>5. Game Over</h3>
+        <p>Va chạm tường (Hard) hoặc tự cắn → state = GAME_OVER → saveHighScore() → hiển thị popup với nút RESTART/MENU
+        </p>
+    </div>
+
+    <h2>⚙️ Xử Lý Cài Đặt</h2>
+
+    <div class="flow">
+        <h3>Đổi màu rắn</h3>
+        <ol>
+            <li>User chọn màu trong SettingActivity</li>
+            <li>rgSnakeColor.OnCheckedChangeListener → settingManager.setSnakeColor(color)</li>
+            <li>SharedPreferences lưu snakeColor</li>
+            <li>User nhấn Back → về MenuActivity</li>
+            <li>User nhấn PLAY → GameActivity</li>
+            <li>initAssetManager() → getSnakeColor() → loadSnakeAssetsByColor(color)</li>
+            <li>AssetManager.snakeHead/snakeBody được cập nhật</li>
+            <li>GameView.drawSnake() sử dụng bitmap mới</li>
+        </ol>
+
+        <h3>Toggle Volume</h3>
+        <ol>
+            <li>User nhấn nút volume trong GameActivity</li>
+            <li>toggleSound() → isSoundEnabled = !isSoundEnabled</li>
+            <li>SettingManager.setSoundEnabled(isSoundEnabled)</li>
+            <li>SoundManager.toggleSound() → pauseAll() nếu tắt</li>
+            <li>updateSoundButtonState() → đổi icon volumeIcon ↔ muteIcon</li>
+        </ol>
+    </div>
+
+    <p style="text-align: center; margin-top: 50px; color: #666;">
+        📝 Tài liệu được tạo tự động - Snake Game Project
+    </p>
+
+</body>
+
+</html>

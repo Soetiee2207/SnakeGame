@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTL Snake Game - Tài Liệu Dự Án</title>
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #2196F3;
+            --accent-color: #FF5722;
+            --bg-dark: #1a1a2e;
+            --bg-card: #16213e;
+            --text-primary: #eaeaea;
+            --text-secondary: #b8b8b8;
+            --code-bg: #0f3460;
+            --border-color: #4a5568;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #0f0f23 100%);
+            color: var(--text-primary);
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #1b5e20 100%);
+            border-radius: 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(76, 175, 80, 0.3);
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+        }
+
+        .header .meta {
+            margin-top: 20px;
+            font-size: 0.95rem;
+            opacity: 0.8;
+        }
+
+        /* Navigation */
+        .nav-box {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .nav-box h2 {
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .nav-links a {
+            color: var(--text-primary);
+            text-decoration: none;
+            background: var(--code-bg);
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .nav-links a:hover {
+            background: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        /* Sections */
+        .section {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 35px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .section h2 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h3 {
+            color: var(--secondary-color);
+            font-size: 1.3rem;
+            margin: 25px 0 15px 0;
+        }
+
+        .section h4 {
+            color: var(--accent-color);
+            font-size: 1.1rem;
+            margin: 20px 0 10px 0;
+        }
+
+        /* Code blocks */
+        pre {
+            background: var(--code-bg);
+            border-radius: 10px;
+            padding: 20px;
+            overflow-x: auto;
+            margin: 15px 0;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        code {
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.9rem;
+            color: #e8e8e8;
+        }
+
+        .inline-code {
+            background: var(--code-bg);
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.85rem;
+            color: #ffd700;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: var(--code-bg);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: var(--primary-color);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: rgba(76, 175, 80, 0.1);
+        }
+
+        /* Cards */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .card {
+            background: var(--code-bg);
+            border-radius: 12px;
+            padding: 25px;
+            border-top: 4px solid var(--primary-color);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h4 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* Highlight boxes */
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(33, 150, 243, 0.1));
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .highlight-box.important {
+            border-left-color: var(--accent-color);
+            background: linear-gradient(135deg, rgba(255, 87, 34, 0.1), rgba(255, 152, 0, 0.1));
+        }
+
+        .highlight-box.info {
+            border-left-color: var(--secondary-color);
+            background: linear-gradient(135deg, rgba(33, 150, 243, 0.1), rgba(3, 169, 244, 0.1));
+        }
+
+        /* Lists */
+        ul,
+        ol {
+            padding-left: 25px;
+            margin: 15px 0;
+        }
+
+        li {
+            margin: 10px 0;
+            color: var(--text-secondary);
+        }
+
+        li strong {
+            color: var(--text-primary);
+        }
+
+        /* Diagrams */
+        .diagram {
+            background: var(--code-bg);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: 'Fira Code', monospace;
+            white-space: pre;
+            overflow-x: auto;
+            line-height: 1.4;
+            color: #00ff88;
+        }
+
+        /* Tags */
+        .tag {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin: 3px;
+        }
+
+        .tag.blue {
+            background: var(--secondary-color);
+        }
+
+        .tag.orange {
+            background: var(--accent-color);
+        }
+
+        .tag.purple {
+            background: #9c27b0;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-color);
+            margin-top: 40px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🐍 BTL SNAKE GAME</h1>
+            <p class="subtitle">Bài Tập Lớn - Lập Trình Ứng Dụng Di Động</p>
+            <p class="meta">Android Native Game | Java | Canvas 2D Graphics</p>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-box">
+            <h2>📋 Mục Lục</h2>
+            <div class="nav-links">
+                <a href="#overview">Tổng Quan</a>
+                <a href="#architecture">Kiến Trúc</a>
+                <a href="#libraries">Thư Viện Sử Dụng</a>
+                <a href="#special-features">Điểm Khác Biệt</a>
+                <a href="#canvas-drawing">Vẽ Bằng Canvas</a>
+                <a href="#game-loop">Game Loop</a>
+                <a href="#important-functions">Các Hàm Quan Trọng</a>
+                <a href="#design-patterns">Design Patterns</a>
+            </div>
+        </div>
+
+        <!-- 1. Overview Section -->
+        <div class="section" id="overview">
+            <h2>📱 1. Tổng Quan Dự Án</h2>
+
+            <p>Dự án <strong>Snake Game</strong> là một game rắn săn mồi được phát triển trên nền tảng Android, sử dụng
+                Java và Canvas 2D để render đồ họa theo thời gian thực. Game có đầy đủ tính năng từ menu, cài đặt, đến
+                gameplay với âm thanh và hiệu ứng.</p>
+
+            <div class="card-grid">
+                <div class="card">
+                    <h4>🎯 Mục Tiêu</h4>
+                    <p>Xây dựng game hoàn chỉnh với kiến trúc rõ ràng, tách biệt logic - UI - assets</p>
+                </div>
+                <div class="card">
+                    <h4>💻 Nền Tảng</h4>
+                    <p>Android Native (API 24+), viết bằng Java thuần, không dùng game engine</p>
+                </div>
+                <div class="card">
+                    <h4>🎨 Đồ Họa</h4>
+                    <p>Canvas 2D với Bitmap sprites, hỗ trợ xoay ảnh theo hướng di chuyển</p>
+                </div>
+                <div class="card">
+                    <h4>🔊 Âm Thanh</h4>
+                    <p>Nhạc nền (MediaPlayer) + Sound Effects (SoundPool) riêng biệt</p>
+                </div>
+            </div>
+
+            <h3>Cấu Trúc Package</h3>
+            <pre><code>com.example.btl_snake_game/
+├── MainActivity.java           # Entry point
+├── game/                       # Game logic layer
+│   ├── GameController.java     # Điều phối game
+│   ├── GameEngine.java         # Logic game chính
+│   ├── GameState.java          # Enum states
+│   └── objects/
+│       ├── Snake.java          # Đối tượng rắn
+│       └── Food.java           # Đối tượng thức ăn
+├── ui/                         # UI layer
+│   ├── GameActivity.java       # Màn chơi game
+│   ├── MenuActivity.java       # Màn menu chính
+│   ├── SettingActivity.java    # Màn cài đặt
+│   ├── GameView.java           # Custom View vẽ Canvas
+│   ├── GameThread.java         # Thread game loop
+│   └── InputHandler.java       # Xử lý gesture
+└── util/                       # Utilities
+    ├── AssetManager.java       # Quản lý assets
+    ├── SettingManager.java     # Lưu cài đặt (SharedPreferences)
+    ├── SoundManager.java       # Quản lý âm thanh
+    └── Vector2D.java           # Lớp toạ độ 2D</code></pre>
+        </div>
+
+        <!-- 2. Libraries Section -->
+        <div class="section" id="libraries">
+            <h2>📚 2. Thư Viện Và APIs Sử Dụng</h2>
+
+            <div class="highlight-box info">
+                <strong>💡 Lưu ý:</strong> Dự án chủ yếu sử dụng Android SDK APIs thay vì thư viện bên ngoài, giúp giảm
+                kích thước APK và tăng hiệu năng.
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Thư Viện / API</th>
+                        <th>Mục Đích Sử Dụng</th>
+                        <th>Package</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="inline-code">android.graphics.Canvas</span></td>
+                        <td>Vẽ đồ họa 2D (rắn, thức ăn, background, UI popups)</td>
+                        <td>GameView</td>
+                    </tr>
+                    <tr>
+                        <td><span class="inline-code">android.graphics.Paint</span></td>
+                        <td>Đặt màu sắc, style, font chữ cho các đối tượng vẽ</td>
+                        <td>GameView</td>
+                    </tr>
+                    <tr>
+                        <td><span class="inline-code">android.graphics.Bitmap</span></td>
+                        <td>Load và hiển thị sprite images từ assets</td>
+                        <td>AssetManager, GameView</td>
+                    </tr>
+                    <tr>
+                        <td><span class="inline-code">android.view.GestureDetector</span></td>
+                        <td>Nhận diện cử chỉ vuốt (swipe) để điều khiển rắn</td>
+                        <td>InputHandler</td>
+                    </tr>
+                    <tr>
+                        <td><span class="inline-code">android.media.MediaPlayer</span></td>
+                        <td>Phát nhạc nền dạng loop (menu music, game music)</td>
+                        <td>SoundManager</td>
+                    </tr>
+                    <tr>
+                        <td><span class="inline-code">android.media.SoundPool</span></td>
+                        <td>Phát sound effects ngắn (ăn mồi, chết)</td>
+                        <td>SoundManager</td>
+                    </tr>
+                    <tr>
+                        <td><span class="inline-code">android.content.SharedPreferences</span></td>
+                        <td>Lưu trữ cài đặt và high score vào bộ nhớ</td>
+                        <td>SettingManager</td>
+                    </tr>
+                    <tr>
+                        <td><span class="inline-code">android.graphics.Typeface</span></td>
+                        <td>Load custom font từ assets (yoster.ttf)</td>
+                        <td>AssetManager</td>
+                    </tr>
+                    <tr>
+                        <td><span class="inline-code">ViewTreeObserver</span></td>
+                        <td>Đợi View được layout xong để lấy kích thước chính xác</td>
+                        <td>GameController</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Dependencies trong Gradle</h3>
+            <pre><code>dependencies {
+    implementation(libs.appcompat)           // AndroidX AppCompat
+    implementation(libs.material)            // Material Design Components
+    implementation(libs.activity)            // Activity lifecycle
+    implementation(libs.constraintlayout)    // ConstraintLayout cho UI
+}</code></pre>
+        </div>
+
+        <!-- 3. Special Features Section -->
+        <div class="section" id="special-features">
+            <h2>⭐ 3. Điểm Khác Biệt So Với Bài Tập Cơ Bản</h2>
+
+            <div class="highlight-box important">
+                <strong>🔥 Khác biệt chính:</strong> Thay vì chỉ vẽ hình đơn giản, dự án này sử dụng
+                <strong>sprite-based rendering</strong> với khả năng <strong>xoay ảnh theo hướng di chuyển</strong>,
+                cùng hệ thống <strong>âm thanh đa lớp</strong> và <strong>quản lý state chuyên nghiệp</strong>.
+            </div>
+
+            <h3>3.1 Vẽ Rắn Với Canvas - Xoay Đầu Theo Hướng</h3>
+            <p>Điểm đặc biệt nhất là việc xoay sprite đầu rắn theo hướng di chuyển bằng phép biến đổi Canvas:</p>
+            <pre><code>private void drawRotatedHead(Canvas canvas, Bitmap bitmap, Vector2D position, Vector2D dir, int cellSize) {
+    float angle = 0;
+    
+    // Tính góc xoay dựa trên hướng (ảnh gốc nhìn sang PHẢI)
+    if (dir.getX() > 0) angle = 0;          // Sang phải
+    else if (dir.getX() < 0) angle = 180;   // Sang trái  
+    else if (dir.getY() > 0) angle = 90;    // Đi xuống
+    else if (dir.getY() < 0) angle = 270;   // Đi lên
+
+    canvas.save();  // Lưu trạng thái canvas
+    
+    // Xoay quanh tâm đầu rắn
+    float centerX = position.getX() + cellSize / 2f;
+    float centerY = position.getY() + cellSize / 2f;
+    canvas.rotate(angle, centerX, centerY);
+    
+    // Vẽ đầu đã xoay
+    Rect destRect = new Rect(position.getX(), position.getY(),
+            position.getX() + cellSize, position.getY() + cellSize);
+    canvas.drawBitmap(bitmap, null, destRect, null);
+    
+    canvas.restore();  // Khôi phục canvas
+}</code></pre>
+
+            <h3>3.2 Hệ Thống Âm Thanh Đa Lớp</h3>
+            <div class="card-grid">
+                <div class="card">
+                    <h4>MediaPlayer - Nhạc Nền</h4>
+                    <p>Phát file MP3 dài, hỗ trợ loop vô hạn. Tách riêng nhạc menu và nhạc game.</p>
+                    <span class="tag">Looping</span>
+                    <span class="tag blue">Long Audio</span>
+                </div>
+                <div class="card">
+                    <h4>SoundPool - Sound Effects</h4>
+                    <p>Phát hiệu ứng ngắn (ăn mồi, chết) với độ trễ thấp. Có thể overlap nhiều âm thanh.</p>
+                    <span class="tag orange">Low Latency</span>
+                    <span class="tag purple">Overlap</span>
+                </div>
+            </div>
+
+            <h3>3.3 Game Loop Với FPS Động</h3>
+            <p>FPS tự động tăng theo điểm số để game khó hơn dần:</p>
+            <pre><code>// FPS tăng dần theo score: base + score/50, tối đa MAX_FPS
+currentFPS = Math.min(baseFPS + score / 50, MAX_FPS);
+
+// Hard mode: base = 8 FPS, Easy mode: base = 5 FPS</code></pre>
+
+            <h3>3.4 Chế Độ Chơi Khác Nhau</h3>
+            <table>
+                <tr>
+                    <th>Tính Năng</th>
+                    <th>Easy Mode</th>
+                    <th>Hard Mode</th>
+                </tr>
+                <tr>
+                    <td>Tốc độ cơ bản</td>
+                    <td>5 FPS</td>
+                    <td>8 FPS</td>
+                </tr>
+                <tr>
+                    <td>Đụng tường</td>
+                    <td>Đi xuyên qua (wrap)</td>
+                    <td>Game Over</td>
+                </tr>
+            </table>
+
+            <h3>3.5 Custom Font Từ Assets</h3>
+            <pre><code>// Load font pixel-art style
+gameFont = Typeface.createFromAsset(context.getAssets(), "fonts/yoster.ttf");
+
+// Áp dụng cho Paint khi vẽ text
+textPaint.setTypeface(AssetManager.gameFont);</code></pre>
+        </div>
+
+        <!-- 4. Canvas Drawing Section -->
+        <div class="section" id="canvas-drawing">
+            <h2>🎨 4. Vẽ Đồ Họa Bằng Canvas</h2>
+
+            <p>Toàn bộ đồ họa game được render trong <span class="inline-code">GameView.onDraw(Canvas canvas)</span>:
+            </p>
+
+            <h3>Quy Trình Render Mỗi Frame</h3>
+            <div class="diagram">
+                ┌─────────────────────────────────────────────────────────┐
+                │ onDraw(Canvas) │
+                │ │
+                │ 1. drawBackground() → Tile background image │
+                │ ↓ │
+                │ 2. drawFood() → Vẽ bitmap thức ăn │
+                │ ↓ │
+                │ 3. drawSnake() → Vẽ đầu (xoay) + thân rắn │
+                │ ↓ │
+                │ 4. drawGameOver() → Popup khi thua (nếu có) │
+                │ ↓ │
+                │ 5. drawPausePopup() → Popup tạm dừng (nếu có) │
+                └─────────────────────────────────────────────────────────┘
+            </div>
+
+            <h3>Code Vẽ Thức Ăn (Fallback graceful)</h3>
+            <pre><code>private void drawFood(Canvas canvas) {
+    Vector2D foodPos = gameEngine.getFood().getPosition();
+    int cellSize = gameEngine.getCellSize();
+    Bitmap foodBmp = AssetManager.food;
+
+    if (foodBmp != null) {
+        // Có ảnh → vẽ bitmap
+        Rect destRect = new Rect(foodPos.getX(), foodPos.getY(),
+                foodPos.getX() + cellSize, foodPos.getY() + cellSize);
+        canvas.drawBitmap(foodBmp, null, destRect, null);
+    } else {
+        // Không có ảnh → vẽ hình tròn đỏ
+        float centerX = foodPos.getX() + cellSize / 2f;
+        float centerY = foodPos.getY() + cellSize / 2f;
+        canvas.drawCircle(centerX, centerY, cellSize / 2f - 2, foodPaint);
+    }
+}</code></pre>
+
+            <h3>Kỹ Thuật Tile Background</h3>
+            <pre><code>private void drawBackground(Canvas canvas) {
+    Bitmap bgBitmap = AssetManager.gameBackground;
+    
+    if (bgBitmap != null) {
+        // Lặp ảnh nền theo cả 2 chiều để phủ kín màn hình
+        for (int x = 0; x < getWidth(); x += bgBitmap.getWidth()) {
+            for (int y = 0; y < getHeight(); y += bgBitmap.getHeight()) {
+                canvas.drawBitmap(bgBitmap, x, y, null);
+            }
+        }
+    } else {
+        canvas.drawColor(Color.rgb(34, 139, 34)); // Forest Green fallback
+    }
+}</code></pre>
+        </div>
+
+        <!-- 5. Game Loop Section -->
+        <div class="section" id="game-loop">
+            <h2>🔄 5. Game Loop Thread</h2>
+
+            <p><span class="inline-code">GameThread</span> là một Thread riêng chạy song song, đảm bảo game mượt mà mà
+                không block UI thread:</p>
+
+            <div class="diagram">
+                ┌──────────────────────── GAME LOOP ────────────────────────┐
+                │ │
+                │ while (alive) { │
+                │ startTime = System.currentTimeMillis() │
+                │ │ │
+                │ ▼ │
+                │ ┌─────────────────────────────────┐ │
+                │ │ if (running) │ │
+                │ │ gameEngine.update() │ ← Logic update │
+                │ │ notifyScoreChange() │ │
+                │ │ adjustFPS() │ │
+                │ └─────────────────────────────────┘ │
+                │ │ │
+                │ ▼ │
+                │ gameView.postInvalidate() ← Trigger redraw │
+                │ │ │
+                │ ▼ │
+                │ sleep(frameTime - elapsedTime) ← FPS control │
+                │ } │
+                │ │
+                └───────────────────────────────────────────────────────────┘
+            </div>
+
+            <h3>Điều Chỉnh FPS Động</h3>
+            <pre><code>@Override
+public void run() {
+    while (alive) {
+        long startTime = System.currentTimeMillis();
+
+        if (running) {
+            gameEngine.update();
+            
+            // Thông báo score thay đổi (callback pattern)
+            int score = gameEngine.getScore();
+            if (score != lastScore) {
+                lastScore = score;
+                if (scoreListener != null) {
+                    scoreListener.onScoreUpdated(score);
+                }
+            }
+            
+            // FPS tăng dần khi score cao (khó hơn dần)
+            currentFPS = Math.min(baseFPS + score / 50, MAX_FPS);
+        }
+        
+        frameTime = 1000 / currentFPS;
+        gameView.postInvalidate();  // Yêu cầu vẽ lại từ worker thread
+
+        // Sleep để đạt đúng FPS mong muốn
+        long elapsedTime = System.currentTimeMillis() - startTime;
+        if (elapsedTime < frameTime) {
+            Thread.sleep(frameTime - elapsedTime);
+        }
+    }
+}</code></pre>
+        </div>
+
+        <!-- 6. Important Functions Section -->
+        <div class="section" id="important-functions">
+            <h2>⚡ 6. Các Hàm Quan Trọng Và Logic</h2>
+
+            <h3>6.1 GameEngine.update() - Trái Tim Game</h3>
+            <p><strong>Vấn đề giải quyết:</strong> Cập nhật trạng thái game mỗi frame - di chuyển rắn, kiểm tra va chạm,
+                xử lý ăn mồi.</p>
+            <pre><code>public void update() {
+    if (state != GameState.PLAYING) return;
+
+    snake.move();  // Di chuyển rắn trước
+
+    // Xử lý va chạm tường theo chế độ
+    boolean isHardMode = settingManager.isHardMode();
+    if (isHardMode) {
+        if (snake.checkWallCollision(gridWidth, gridHeight)) {
+            state = GameState.GAME_OVER;
+            SoundManager.getInstance().playDieSound();
+            saveHighScore();
+            return;
+        }
+    } else {
+        wrapSnakePosition();  // Easy mode: đi xuyên tường
+    }
+
+    // Kiểm tra ăn mồi
+    if (food.isEaten(snake.getHead())) {
+        snake.grow();
+        score += 10;
+        SoundManager.getInstance().playEatSound();
+        food.spawn();
+        // Đảm bảo food không spawn trên thân rắn
+        while (isOnSnake(food.getPosition())) {
+            food.spawn();
+        }
+    }
+
+    // Tự cắn: game over
+    if (snake.checkSelfCollision()) {
+        state = GameState.GAME_OVER;
+        SoundManager.getInstance().playDieSound();
+        saveHighScore();
+    }
+}</code></pre>
+
+            <h3>6.2 Snake.move() - Di Chuyển Rắn</h3>
+            <p><strong>Vấn đề giải quyết:</strong> Di chuyển rắn theo kiểu "đầu mới được thêm, đuôi bị xóa" - kỹ thuật
+                classic của game rắn.</p>
+            <pre><code>public void move() {
+    direction = nextDirection;  // Áp dụng hướng mới (buffered)
+    
+    Vector2D head = body.get(0);
+    Vector2D newHead = new Vector2D(
+        head.getX() + direction.getX(),
+        head.getY() + direction.getY()
+    );
+
+    body.add(0, newHead);  // Thêm đầu mới vào đầu list
+
+    if (!growing) {
+        body.remove(body.size() - 1);  // Xóa đuôi nếu không đang grow
+    } else {
+        growing = false;  // Reset flag sau khi grow
+    }
+}</code></pre>
+
+            <h3>6.3 Snake.setDirection() - Chống Đi Ngược</h3>
+            <p><strong>Vấn đề giải quyết:</strong> Không cho rắn đi ngược lại hướng hiện tại (ví dụ: đang đi phải không
+                thể rẽ trái ngay).</p>
+            <pre><code>public void setDirection(Vector2D newDirection) {
+    // Kiểm tra: tổng 2 vector != 0 → không ngược hướng
+    if (direction.getX() + newDirection.getX() != 0 ||
+        direction.getY() + newDirection.getY() != 0) {
+        this.nextDirection = newDirection;  // Buffer để apply ở frame sau
+    }
+}</code></pre>
+
+            <h3>6.4 wrapSnakePosition() - Đi Xuyên Tường (Easy Mode)</h3>
+            <p><strong>Vấn đề giải quyết:</strong> Khi rắn ra khỏi biên màn hình, xuất hiện ở phía đối diện.</p>
+            <pre><code>private void wrapSnakePosition() {
+    Vector2D head = snake.getHead();
+    int maxX = gridWidth * cellSize;
+    int maxY = gridHeight * cellSize;
+
+    int newX = head.getX();
+    int newY = head.getY();
+
+    // Wrap theo chiều ngang
+    if (head.getX() < 0) newX = maxX - cellSize;
+    else if (head.getX() >= maxX) newX = 0;
+
+    // Wrap theo chiều dọc
+    if (head.getY() < 0) newY = maxY - cellSize;
+    else if (head.getY() >= maxY) newY = 0;
+
+    head.setX(newX);
+    head.setY(newY);
+}</code></pre>
+
+            <h3>6.5 InputHandler.onFling() - Nhận Diện Vuốt</h3>
+            <p><strong>Vấn đề giải quyết:</strong> Chuyển đổi cử chỉ vuốt màn hình thành hướng di chuyển của rắn.</p>
+            <pre><code>@Override
+public boolean onFling(MotionEvent e1, MotionEvent e2,
+                       float velocityX, float velocityY) {
+    if (gameEngine.getState() != GameState.PLAYING) return false;
+
+    float diffX = e2.getX() - e1.getX();
+    float diffY = e2.getY() - e1.getY();
+
+    if (Math.abs(diffX) > Math.abs(diffY)) {
+        // Vuốt ngang
+        if (Math.abs(diffX) > SWIPE_THRESHOLD &&
+            Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+            if (diffX > 0) {
+                gameEngine.changeDirection(new Vector2D(cellSize, 0));  // Phải
+            } else {
+                gameEngine.changeDirection(new Vector2D(-cellSize, 0)); // Trái
+            }
+            return true;
+        }
+    } else {
+        // Vuốt dọc
+        if (Math.abs(diffY) > SWIPE_THRESHOLD &&
+            Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
+            if (diffY > 0) {
+                gameEngine.changeDirection(new Vector2D(0, cellSize));  // Xuống
+            } else {
+                gameEngine.changeDirection(new Vector2D(0, -cellSize)); // Lên
+            }
+            return true;
+        }
+    }
+    return false;
+}</code></pre>
+
+            <h3>6.6 GameController.init() - Khởi Tạo Đúng Timing</h3>
+            <p><strong>Vấn đề giải quyết:</strong> View trong Android chưa có kích thước ngay khi onCreate. Phải đợi
+                layout xong mới tính được grid size.</p>
+            <pre><code>public void init(Context context, GameView gameView) {
+    SettingManager.getInstance().init(context);
+    AssetManager assetLoader = new AssetManager(context);
+    assetLoader.loadAllAssets();
+
+    // Đợi View được layout xong mới khởi tạo game
+    gameView.getViewTreeObserver().addOnGlobalLayoutListener(
+        new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (!isInitialized && gameView.getWidth() > 0) {
+                    initGameWithViewSize();  // Bây giờ mới có kích thước thật
+                    isInitialized = true;
+                    gameView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+            }
+        }
+    );
+}</code></pre>
+        </div>
+
+        <!-- 7. Design Patterns Section -->
+        <div class="section" id="design-patterns">
+            <h2>🏗️ 7. Design Patterns Áp Dụng</h2>
+
+            <div class="card-grid">
+                <div class="card">
+                    <h4>🔹 Singleton Pattern</h4>
+                    <p>Sử dụng cho <span class="inline-code">SettingManager</span> và <span
+                            class="inline-code">SoundManager</span> để đảm bảo chỉ có một instance duy nhất trong toàn
+                        app.</p>
+                    <pre><code>private static SoundManager instance;
+
+public static SoundManager getInstance() {
+    if (instance == null) {
+        instance = new SoundManager();
+    }
+    return instance;
+}</code></pre>
+                </div>
+
+                <div class="card">
+                    <h4>🔹 Observer Pattern (Callback)</h4>
+                    <p>Sử dụng interface callback để thông báo score thay đổi từ GameThread lên Activity.</p>
+                    <pre><code>public interface ScoreUpdateListener {
+    void onScoreUpdated(int score);
+}
+
+// Trong Activity:
+controller.setScoreUpdateListener(
+    score -> runOnUiThread(() -> updateScore(score))
+);</code></pre>
+                </div>
+
+                <div class="card">
+                    <h4>🔹 MVC-like Architecture</h4>
+                    <p><strong>Model:</strong> Snake, Food, GameState<br>
+                        <strong>View:</strong> GameView, Activities<br>
+                        <strong>Controller:</strong> GameController, GameEngine
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h4>🔹 State Pattern</h4>
+                    <p>GameState enum quản lý trạng thái: MENU → PLAYING → PAUSED → GAME_OVER</p>
+                    <pre><code>public enum GameState {
+    MENU,
+    PLAYING,
+    PAUSED,
+    GAME_OVER
+}</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- 8. Architecture Diagram -->
+        <div class="section" id="architecture">
+            <h2>🔧 8. Sơ Đồ Kiến Trúc</h2>
+
+            <h3>Class Diagram (Simplified)</h3>
+            <div class="diagram">
+                ┌─────────────────┐
+                │ MainActivity │
+                └────────┬────────┘
+                │
+                ┌──────────────────────────────┼──────────────────────────────┐
+                │ │ │
+                ┌─────────▼─────────┐ ┌───────────▼───────────┐ ┌──────────▼──────────┐
+                │ MenuActivity │ │ GameActivity │ │ SettingActivity │
+                └───────────────────┘ └───────────┬───────────┘ └─────────────────────┘
+                │
+                ┌─────────▼─────────┐
+                │ GameController │
+                └────────┬──────────┘
+                ┌──────────────────┼──────────────────┐
+                │ │ │
+                ┌─────────▼─────────┐ ┌──────▼──────┐ ┌─────────▼─────────┐
+                │ GameEngine │ │ GameView │ │ GameThread │
+                └─────────┬─────────┘ └─────────────┘ └───────────────────┘
+                │
+                ┌───────────┼───────────┐
+                │ │
+                ┌───────▼───────┐ ┌───────▼───────┐
+                │ Snake │ │ Food │
+                └───────────────┘ └───────────────┘
+            </div>
+
+            <h3>Sequence Diagram - Game Flow</h3>
+            <div class="diagram">
+                User GameActivity GameController GameEngine GameView
+                │ │ │ │ │
+                │ [Start Game] │ │ │ │
+                ├────────────────>│ │ │ │
+                │ │ init() │ │ │
+                │ ├─────────────────>│ │ │
+                │ │ │ initGame() │ │
+                │ │ ├────────────────>│ │
+                │ │ │ │ │
+                │ [Swipe] │ │ │ │
+                ├────────────────>│ │ │ │
+                │ │ onFling() │ │ │
+                │ ├─────────────────>│ │ │
+                │ │ │ changeDirection │ │
+                │ │ ├────────────────>│ │
+                │ │ │ │ │
+                │ │ │ [LOOP] │ │
+                │ │ │ update() │ │
+                │ │ ├────────────────>│ │
+                │ │ │ │ postInvalidate
+                │ │ │ ├──────────────>│
+                │ │ │ │ │
+                │ │ │ │ onDraw() │
+                │ │ │ │<──────────────│ │ │ │ │ │ </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <p>📝 Tài liệu được tạo tự động cho dự án BTL Snake Game</p>
+                <p>🎓 Bài Tập Lớn - Lập Trình Ứng Dụng Di Động</p>
+                <p style="margin-top: 15px; font-size: 0.85rem;">
+                    <span class="tag">Android</span>
+                    <span class="tag blue">Java</span>
+                    <span class="tag orange">Canvas 2D</span>
+                    <span class="tag purple">Game Development</span>
+                </p>
+            </div>
+        </div>
+</body>
+
+</html>
