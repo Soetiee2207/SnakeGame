@@ -24,4 +24,8 @@
     <string name="difficulty_hard">Hard</string>
     <string name="difficulty_hard_desc">Fast speed, die on wall collision</string>
     <string name="btn_back">BACK</string>
+    <string name="snake_color_label">Snake Color</string>
+    <string name="color_blue">Blue</string>
+    <string name="color_green">Green</string>
+    <string name="color_purple">Purple</string>
 </resources>

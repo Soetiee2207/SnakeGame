@@ -18,9 +18,14 @@ public class SettingActivity extends AppCompatActivity {
     private ConstraintLayout rootLayout;
     private TextView tvSettingsTitle;
     private TextView tvDifficultyLabel;
+    private TextView tvSnakeColorLabel;
     private RadioGroup rgDifficulty;
+    private RadioGroup rgSnakeColor;
     private RadioButton rbEasy;
     private RadioButton rbHard;
+    private RadioButton rbBlue;
+    private RadioButton rbGreen;
+    private RadioButton rbPurple;
     private Button btnBack;
     private AssetManager assetManager;
     private SettingManager settingManager;
@@ -53,9 +58,14 @@ public class SettingActivity extends AppCompatActivity {
         rootLayout = findViewById(R.id.root_layout);
         tvSettingsTitle = findViewById(R.id.tv_settings_title);
         tvDifficultyLabel = findViewById(R.id.tv_difficulty_label);
+        tvSnakeColorLabel = findViewById(R.id.tv_snake_color_label);
         rgDifficulty = findViewById(R.id.rg_difficulty);
+        rgSnakeColor = findViewById(R.id.rg_snake_color);
         rbEasy = findViewById(R.id.rb_easy);
         rbHard = findViewById(R.id.rb_hard);
+        rbBlue = findViewById(R.id.rb_blue);
+        rbGreen = findViewById(R.id.rb_green);
+        rbPurple = findViewById(R.id.rb_purple);
         btnBack = findViewById(R.id.btn_back);
     }
 
@@ -75,8 +85,12 @@ public class SettingActivity extends AppCompatActivity {
         if (AssetManager.gameFont != null) {
             tvSettingsTitle.setTypeface(AssetManager.gameFont);
             tvDifficultyLabel.setTypeface(AssetManager.gameFont);
+            tvSnakeColorLabel.setTypeface(AssetManager.gameFont);
             rbEasy.setTypeface(AssetManager.gameFont);
             rbHard.setTypeface(AssetManager.gameFont);
+            rbBlue.setTypeface(AssetManager.gameFont);
+            rbGreen.setTypeface(AssetManager.gameFont);
+            rbPurple.setTypeface(AssetManager.gameFont);
             btnBack.setTypeface(AssetManager.gameFont);
         }
 
@@ -87,11 +101,27 @@ public class SettingActivity extends AppCompatActivity {
     }
 
     private void loadSettings() {
+        // Load difficulty
         int difficulty = getDifficulty();
         if (difficulty == DIFFICULTY_EASY) {
             rbEasy.setChecked(true);
         } else {
             rbHard.setChecked(true);
+        }
+
+        // Load snake color
+        int snakeColor = settingManager.getSnakeColor();
+        switch (snakeColor) {
+            case SettingManager.COLOR_GREEN:
+                rbGreen.setChecked(true);
+                break;
+            case SettingManager.COLOR_PURPLE:
+                rbPurple.setChecked(true);
+                break;
+            case SettingManager.COLOR_BLUE:
+            default:
+                rbBlue.setChecked(true);
+                break;
         }
     }
 
@@ -101,6 +131,19 @@ public class SettingActivity extends AppCompatActivity {
                 saveDifficulty(DIFFICULTY_EASY);
             } else if (checkedId == R.id.rb_hard) {
                 saveDifficulty(DIFFICULTY_HARD);
+            }
+        });
+
+        rgSnakeColor.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId == R.id.rb_blue) {
+                android.util.Log.d("SettingActivity", "Snake color changed to BLUE (0)");
+                settingManager.setSnakeColor(SettingManager.COLOR_BLUE);
+            } else if (checkedId == R.id.rb_green) {
+                android.util.Log.d("SettingActivity", "Snake color changed to GREEN (1)");
+                settingManager.setSnakeColor(SettingManager.COLOR_GREEN);
+            } else if (checkedId == R.id.rb_purple) {
+                android.util.Log.d("SettingActivity", "Snake color changed to PURPLE (2)");
+                settingManager.setSnakeColor(SettingManager.COLOR_PURPLE);
             }
         });
 

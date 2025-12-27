@@ -79,6 +79,60 @@
 
     </RadioGroup>
 
+    <TextView
+        android:id="@+id/tv_snake_color_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/snake_color_label"
+        android:textColor="@color/text_light"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rg_difficulty" />
+
+    <RadioGroup
+        android:id="@+id/rg_snake_color"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_snake_color_label">
+
+        <RadioButton
+            android:id="@+id/rb_blue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/color_blue"
+            android:textColor="@color/text_light"
+            android:textSize="16sp"
+            android:paddingVertical="12dp"/>
+
+        <RadioButton
+            android:id="@+id/rb_green"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/color_green"
+            android:textColor="@color/text_light"
+            android:textSize="16sp"
+            android:paddingVertical="12dp"/>
+
+        <RadioButton
+            android:id="@+id/rb_purple"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/color_purple"
+            android:textColor="@color/text_light"
+            android:textSize="16sp"
+            android:paddingVertical="12dp"/>
+
+    </RadioGroup>
+
     <Button
         android:id="@+id/btn_back"
         android:layout_width="200dp"

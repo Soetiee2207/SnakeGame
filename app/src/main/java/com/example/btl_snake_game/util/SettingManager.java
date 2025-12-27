@@ -10,9 +10,14 @@ public class SettingManager {
     private static final String HIGH_SCORE_KEY = "highScore";
     private static final String SOUND_ENABLED_KEY = "soundEnabled";
     private static final String DIFFICULTY_KEY = "difficulty";
+    private static final String SNAKE_COLOR_KEY = "snakeColor";
 
     public static final int DIFFICULTY_EASY = 0;
     public static final int DIFFICULTY_HARD = 1;
+
+    public static final int COLOR_BLUE = 0;
+    public static final int COLOR_GREEN = 1;
+    public static final int COLOR_PURPLE = 2;
 
     private SettingManager() {}
 
@@ -68,5 +73,18 @@ public class SettingManager {
 
     public boolean isHardMode() {
         return getDifficulty() == DIFFICULTY_HARD;
+    }
+
+    public void setSnakeColor(int color) {
+        if (prefs != null) {
+            prefs.edit().putInt(SNAKE_COLOR_KEY, color).apply();
+        }
+    }
+
+    public int getSnakeColor() {
+        if (prefs != null) {
+            return prefs.getInt(SNAKE_COLOR_KEY, COLOR_BLUE);
+        }
+        return COLOR_BLUE;
     }
 }

@@ -73,6 +73,11 @@ public class MenuActivity extends AppCompatActivity {
         
         SettingManager.getInstance().init(this);
         SoundManager.getInstance().init(this);
+        
+        // Load snake assets based on saved color preference
+        int snakeColor = SettingManager.getInstance().getSnakeColor();
+        assetManager.loadSnakeAssetsByColor(snakeColor);
+        
         updateHighScore();
 
         // Apply assets to UI

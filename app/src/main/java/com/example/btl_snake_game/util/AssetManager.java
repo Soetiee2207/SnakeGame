@@ -19,6 +19,7 @@ public class AssetManager {
     public static Bitmap menuBackground;
     public static Bitmap pauseIcon;
     public static Bitmap volumeIcon;
+    public static Bitmap muteIcon;
     public static Bitmap snakeLogo;
     public static Bitmap snakeTitle;
 
@@ -51,9 +52,7 @@ public class AssetManager {
     }
 
     public void loadAllAssets() {
-        // Load game sprites
-        snakeHead = loadBitmap("snake_head.png");
-        snakeBody = loadBitmap("snake_body.png");
+        // Load food sprite
         food = loadBitmap("food.png");
 
         // Load UI elements
@@ -62,11 +61,34 @@ public class AssetManager {
         menuBackground = loadBitmap("menu_background.png");
         pauseIcon = loadBitmap("pause_game.png");
         volumeIcon = loadBitmap("volume_game.png");
+        muteIcon = loadBitmap("mute_game.png");
         snakeLogo = loadBitmap("snake_logo.png");
         snakeTitle = loadBitmap("snake_title.png");
 
         // Load font
         gameFont = loadFont("yoster.ttf");
+        
+        // NOTE: Snake head/body are NOT loaded here - use loadSnakeAssetsByColor() instead
+    }
+
+    public void loadSnakeAssetsByColor(int color) {
+        String colorName;
+        switch (color) {
+            case SettingManager.COLOR_GREEN:
+                colorName = "green";
+                break;
+            case SettingManager.COLOR_PURPLE:
+                colorName = "purple";
+                break;
+            case SettingManager.COLOR_BLUE:
+            default:
+                colorName = "blue";
+                break;
+        }
+        android.util.Log.d("AssetManager", "Loading snake assets: " + colorName);
+        snakeHead = loadBitmap("snake_head_" + colorName + ".png");
+        snakeBody = loadBitmap("snake_body_" + colorName + ".png");
+        android.util.Log.d("AssetManager", "snakeHead loaded: " + (snakeHead != null) + ", snakeBody loaded: " + (snakeBody != null));
     }
 
     public static Typeface getGameFont() {

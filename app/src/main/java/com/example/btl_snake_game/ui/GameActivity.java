@@ -57,11 +57,18 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void initAssetManager() {
-        assetManager = new AssetManager(this);
-        assetManager.loadAllAssets();
-        
+        // Init SettingManager first to access preferences
         SettingManager.getInstance().init(this);
         isSoundEnabled = SettingManager.getInstance().isSoundEnabled();
+
+        // Load all base assets
+        assetManager = new AssetManager(this);
+        assetManager.loadAllAssets();
+
+        // Load snake assets based on selected color (overrides default blue)
+        int snakeColor = SettingManager.getInstance().getSnakeColor();
+        android.util.Log.d("GameActivity", "Loading snake color: " + snakeColor);
+        assetManager.loadSnakeAssetsByColor(snakeColor);
 
         applyAssets();
     }
@@ -171,7 +178,17 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void updateSoundButtonState() {
-        // Icon will be updated when asset images are set
+        if (btnSound != null) {
+            if (isSoundEnabled) {
+                if (AssetManager.volumeIcon != null) {
+                    btnSound.setImageBitmap(AssetManager.volumeIcon);
+                }
+            } else {
+                if (AssetManager.muteIcon != null) {
+                    btnSound.setImageBitmap(AssetManager.muteIcon);
+                }
+            }
+        }
     }
 
     @Override
