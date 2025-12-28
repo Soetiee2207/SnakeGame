@@ -1,0 +1,341 @@
+# SLIDE BÁO CÁO: SNAKE GAME - ANDROID APP
+================================================================================
+
+## SLIDE 1: TRANG BÌA
+--------------------------------------------------------------------------------
+- Tên đề tài: ỨNG DỤNG GAME RẮN SĂN MỒI TRÊN ANDROID
+- Môn học: Lập trình ứng dụng di động
+- Công nghệ: Java, Android SDK
+- Thành viên nhóm: [Điền tên]
+- GVHD: [Điền tên]
+
+================================================================================
+
+## SLIDE 2: MỤC LỤC
+--------------------------------------------------------------------------------
+1. Giới thiệu đề tài
+2. Công nghệ sử dụng
+3. Kiến trúc hệ thống
+4. Các chức năng chính
+5. Thiết kế giao diện
+6. Xử lý Game Logic
+7. Quản lý dữ liệu
+8. Demo sản phẩm
+9. Kết luận
+
+================================================================================
+
+## SLIDE 3: GIỚI THIỆU ĐỀ TÀI
+--------------------------------------------------------------------------------
+### Mô tả:
+- Game rắn săn mồi cổ điển được phát triển trên nền tảng Android
+- Điều khiển rắn bằng cử chỉ vuốt (swipe gesture)
+- Lưu điểm cao nhất, tùy chỉnh độ khó và màu rắn
+
+### Mục tiêu:
+- Áp dụng kiến thức lập trình Android
+- Thực hành Canvas drawing, Game loop
+- Quản lý âm thanh và assets
+- Lưu trữ dữ liệu với SharedPreferences
+
+================================================================================
+
+## SLIDE 4: CÔNG NGHỆ SỬ DỤNG
+--------------------------------------------------------------------------------
+### Ngôn ngữ & Framework:
+- Java (Android SDK)
+- Android Studio IDE
+- Gradle Build System
+
+### Thư viện Android:
+- Canvas API - Vẽ đồ họa game
+- MediaPlayer - Phát nhạc nền
+- SoundPool - Hiệu ứng âm thanh
+- SharedPreferences - Lưu cài đặt
+- GestureDetector - Nhận diện cử chỉ
+
+### Assets:
+- Custom Font (yoster.ttf)
+- PNG images cho snake, food, UI
+- MP3/WAV cho âm thanh
+
+================================================================================
+
+## SLIDE 5: KIẾN TRÚC HỆ THỐNG
+--------------------------------------------------------------------------------
+### Mô hình MVC:
+┌─────────────────────────────────────────────────────────────┐
+│                        UI LAYER                              │
+│  MenuActivity │ GameActivity │ SettingActivity │ GameView   │
+└─────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────┐
+│                       GAME LAYER                             │
+│    GameEngine │ GameController │ GameThread │ InputHandler  │
+└─────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────┐
+│                      UTILITY LAYER                           │
+│   AssetManager │ SettingManager │ SoundManager │ Vector2D   │
+└─────────────────────────────────────────────────────────────┘
+
+### Cấu trúc Package:
+- com.example.btl_snake_game
+  ├── ui/        (Activities, Views)
+  ├── game/      (Engine, Objects)
+  └── util/      (Managers, Helpers)
+
+================================================================================
+
+## SLIDE 6: CÁC CHỨC NĂNG CHÍNH
+--------------------------------------------------------------------------------
+### 1. Menu chính:
+- Hiển thị điểm cao nhất
+- Nút Play, Settings, Exit
+- Nhạc nền menu
+
+### 2. Gameplay:
+- Điều khiển rắn bằng swipe
+- Ăn thức ăn để tăng điểm
+- Game over khi đâm tường/thân
+- Pause/Resume game
+
+### 3. Cài đặt:
+- Chọn độ khó (Easy/Hard)
+- Chọn màu rắn (Blue/Green/Purple)
+- Bật/tắt âm thanh
+
+### 4. Lưu trữ:
+- Tự động lưu điểm cao
+- Lưu cài đặt người dùng
+
+================================================================================
+
+## SLIDE 7: THIẾT KẾ GIAO DIỆN
+--------------------------------------------------------------------------------
+### Màn hình Menu:
+- Background gradient
+- Logo rắn + Tiêu đề game
+- High Score display
+- 3 nút với custom font
+
+### Màn hình Game:
+- Game area với grid
+- Score hiển thị real-time
+- Nút Pause và Sound
+- Dialog Game Over
+
+### Màn hình Settings:
+- RadioGroup cho Difficulty
+- RadioGroup cho Snake Color
+- Nút Back
+
+================================================================================
+
+## SLIDE 8: GAME LOOP - CƠ CHẾ HOẠT ĐỘNG
+--------------------------------------------------------------------------------
+### GameThread:
+┌──────────────────────────────────────┐
+│           while (running)            │
+│  ┌────────────────────────────────┐  │
+│  │  1. update() - Cập nhật logic │  │
+│  │  2. draw() - Vẽ lên Canvas    │  │
+│  │  3. sleep() - Chờ đủ frame    │  │
+│  └────────────────────────────────┘  │
+└──────────────────────────────────────┘
+
+### FPS Control:
+- Easy mode: 5 FPS (200ms/frame)
+- Hard mode: 8 FPS (125ms/frame)
+- Tốc độ tăng dần theo điểm số
+
+================================================================================
+
+## SLIDE 9: XỬ LÝ GAME LOGIC
+--------------------------------------------------------------------------------
+### Snake Movement:
+1. Tính vị trí mới của đầu rắn
+2. Thêm vị trí mới vào đầu danh sách
+3. Xóa segment cuối (nếu không ăn food)
+
+### Collision Detection:
+- Va chạm tường: head.x/y ngoài grid
+- Va chạm thân: head trùng với body segment
+- Ăn food: head.position == food.position
+
+### Food Spawning:
+- Random vị trí trên grid
+- Kiểm tra không trùng thân rắn
+- Respawn sau khi bị ăn
+
+================================================================================
+
+## SLIDE 10: QUẢN LÝ ÂM THANH
+--------------------------------------------------------------------------------
+### SoundManager (Singleton Pattern):
+┌─────────────────────────────────────────┐
+│  MediaPlayer        │  SoundPool        │
+│  ─────────────────  │  ─────────────   │
+│  • Menu music       │  • Eat SFX        │
+│  • Game music       │  • Die SFX        │
+│  • Loop playback    │  • Short sounds   │
+└─────────────────────────────────────────┘
+
+### Luồng xử lý:
+- init() → Load tất cả sounds
+- playMenuMusic() ↔ playGameMusic()
+- playEatSound(), playDieSound()
+- pauseAll() khi minimize app
+
+================================================================================
+
+## SLIDE 11: QUẢN LÝ DỮ LIỆU
+--------------------------------------------------------------------------------
+### SettingManager (SharedPreferences):
+┌────────────────────────────────────────┐
+│  Key              │  Type    │ Default │
+│  ─────────────────│──────────│─────────│
+│  highScore        │  int     │  0      │
+│  soundEnabled     │  boolean │  true   │
+│  difficulty       │  int     │  0      │
+│  snakeColor       │  int     │  0      │
+└────────────────────────────────────────┘
+
+### Ưu điểm:
+- Dữ liệu persist sau khi đóng app
+- Truy cập nhanh qua Singleton
+- Không cần database phức tạp
+
+================================================================================
+
+## SLIDE 12: INPUT HANDLING
+--------------------------------------------------------------------------------
+### GestureDetector + InputHandler:
+┌─────────────────────────────────────────┐
+│  User swipes on screen                  │
+│            ↓                            │
+│  onFling(e1, e2, velocityX, velocityY)  │
+│            ↓                            │
+│  Calculate diffX, diffY                 │
+│            ↓                            │
+│  |diffX| > |diffY| → Horizontal swipe   │
+│  |diffY| > |diffX| → Vertical swipe     │
+│            ↓                            │
+│  gameEngine.changeDirection(Vector2D)   │
+└─────────────────────────────────────────┘
+
+### Threshold Values:
+- SWIPE_THRESHOLD = 100 pixels
+- SWIPE_VELOCITY_THRESHOLD = 100
+
+================================================================================
+
+## SLIDE 13: ASSET MANAGEMENT
+--------------------------------------------------------------------------------
+### AssetManager:
+- Load Bitmap từ assets/images/
+- Load Typeface từ assets/fonts/
+- Static fields để truy cập global
+
+### Assets Structure:
+assets/
+├── images/
+│   ├── snake_head_blue.png
+│   ├── snake_body_blue.png
+│   ├── food.png
+│   ├── menu_background.png
+│   └── ...
+├── fonts/
+│   └── yoster.ttf
+└── sounds/
+    ├── 01 The Piano.mp3
+    ├── 02 99 Problems.mp3
+    ├── sfx_eat.wav
+    └── sfx_die.wav
+
+================================================================================
+
+## SLIDE 14: CLASS DIAGRAM (TÓM TẮT)
+--------------------------------------------------------------------------------
+### Quan hệ giữa các lớp:
+
+MainActivity ──────→ MenuActivity
+                          │
+              ┌───────────┴───────────┐
+              ↓                       ↓
+        GameActivity           SettingActivity
+              │                       │
+              ↓                       │
+          GameView ←──────────────────┘
+              │
+              ↓
+         GameThread
+              │
+              ↓
+         GameEngine ──→ Snake, Food
+              ↑
+              │
+        InputHandler
+
+### Utility Classes (Singleton):
+- SettingManager
+- SoundManager
+
+================================================================================
+
+## SLIDE 15: KẾT LUẬN
+--------------------------------------------------------------------------------
+### Đã hoàn thành:
+✓ Game rắn săn mồi hoàn chỉnh
+✓ Điều khiển bằng swipe gesture
+✓ Hệ thống cài đặt (độ khó, màu sắc)
+✓ Âm thanh nền và hiệu ứng
+✓ Lưu điểm cao
+
+### Kiến thức áp dụng:
+- Android Activity Lifecycle
+- Canvas 2D Drawing
+- Game Loop Pattern
+- Singleton Pattern
+- SharedPreferences
+- Media Playback
+
+### Hướng phát triển:
+- Thêm nhiều level
+- Leaderboard online
+- Obstacle và power-ups
+- Multiplayer mode
+
+================================================================================
+
+## SLIDE 16: DEMO
+--------------------------------------------------------------------------------
+### Các bước demo:
+1. Khởi động app → Menu xuất hiện
+2. Vào Settings → Thay đổi độ khó, màu rắn
+3. Bấm Play → Chơi game
+4. Vuốt để điều khiển rắn
+5. Ăn food → Điểm tăng
+6. Game Over → Hiển thị điểm
+7. Kiểm tra High Score được lưu
+
+================================================================================
+
+## SLIDE 17: Q&A
+--------------------------------------------------------------------------------
+### Câu hỏi thường gặp:
+
+Q: Tại sao dùng Canvas thay vì Game Engine?
+A: Để học cách vẽ đồ họa từ đầu, hiểu rõ game loop
+
+Q: SharedPreferences vs SQLite?
+A: Dữ liệu đơn giản, key-value → SharedPreferences phù hợp hơn
+
+Q: Tại sao dùng Singleton cho Manager classes?
+A: Đảm bảo 1 instance duy nhất, truy cập global thuận tiện
+
+Q: FPS được tính như thế nào?
+A: targetTime = 1000 / targetFPS, sleep nếu frame xử lý nhanh hơn
+
+================================================================================
+# END OF SLIDE DATA

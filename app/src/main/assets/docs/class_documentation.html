@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Documentation - Snake Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #00ff88;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        h2 {
+            color: #00d4ff;
+            border-bottom: 2px solid #00d4ff;
+            padding-bottom: 10px;
+            margin: 30px 0 20px;
+        }
+
+        h3 {
+            color: #ff6b6b;
+            margin: 20px 0 10px;
+        }
+
+        h4 {
+            color: #ffd93d;
+            margin: 15px 0 8px;
+        }
+
+        .class-card {
+            background: #16213e;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 4px solid #00ff88;
+        }
+
+        .workflow {
+            background: #0f3460;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .workflow-step {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+        }
+
+        .step-num {
+            background: #00ff88;
+            color: #1a1a2e;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #333;
+        }
+
+        th {
+            background: #0f3460;
+            color: #00d4ff;
+        }
+
+        tr:nth-child(even) {
+            background: #1f2f4f;
+        }
+
+        code {
+            background: #0f3460;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #00ff88;
+            font-family: 'Consolas', monospace;
+        }
+
+        .type {
+            color: #ff9f43;
+        }
+
+        .access {
+            color: #a29bfe;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>📘 Class Documentation - Snake Game</h1>
+
+        <!-- InputHandler -->
+        <div class="class-card">
+            <h2>1. InputHandler</h2>
+            <p><strong>Package:</strong> <code>com.example.btl_snake_game.ui</code></p>
+            <p><strong>Extends:</strong> <code>GestureDetector.SimpleOnGestureListener</code></p>
+            <p><strong>Mục đích:</strong> Xử lý input từ người dùng thông qua cử chỉ vuốt (swipe) để điều khiển rắn.</p>
+
+            <h3>🔄 Luồng Hoạt Động</h3>
+            <div class="workflow">
+                <div class="workflow-step"><span class="step-num">1</span>Người dùng vuốt trên màn hình game</div>
+                <div class="workflow-step"><span class="step-num">2</span><code>onDown()</code> được gọi → return true
+                    để nhận sự kiện tiếp theo</div>
+                <div class="workflow-step"><span class="step-num">3</span><code>onFling()</code> được gọi với thông tin
+                    vuốt</div>
+                <div class="workflow-step"><span class="step-num">4</span>Kiểm tra game đang ở trạng thái PLAYING</div>
+                <div class="workflow-step"><span class="step-num">5</span>Tính toán hướng vuốt (ngang/dọc) dựa trên
+                    diffX, diffY</div>
+                <div class="workflow-step"><span class="step-num">6</span>Gọi <code>gameEngine.changeDirection()</code>
+                    với Vector2D mới</div>
+            </div>
+
+            <h3>📊 Biến</h3>
+            <table>
+                <tr>
+                    <th>Tên</th>
+                    <th>Kiểu</th>
+                    <th>Mô tả</th>
+                </tr>
+                <tr>
+                    <td><code>gameEngine</code></td>
+                    <td class="type">GameEngine</td>
+                    <td>Tham chiếu đến engine điều khiển game logic</td>
+                </tr>
+                <tr>
+                    <td><code>cellSize</code></td>
+                    <td class="type">int</td>
+                    <td>Kích thước 1 ô trên lưới (pixels)</td>
+                </tr>
+                <tr>
+                    <td><code>SWIPE_THRESHOLD</code></td>
+                    <td class="type">int (100)</td>
+                    <td>Ngưỡng khoảng cách tối thiểu để nhận diện vuốt</td>
+                </tr>
+                <tr>
+                    <td><code>SWIPE_VELOCITY_THRESHOLD</code></td>
+                    <td class="type">int (100)</td>
+                    <td>Ngưỡng vận tốc tối thiểu</td>
+                </tr>
+            </table>
+
+            <h3>⚙️ Hàm</h3>
+            <table>
+                <tr>
+                    <th>Hàm</th>
+                    <th>Mô tả</th>
+                </tr>
+                <tr>
+                    <td><code>InputHandler(GameEngine, int)</code></td>
+                    <td>Constructor - khởi tạo với gameEngine và cellSize</td>
+                </tr>
+                <tr>
+                    <td><code>onDown(MotionEvent)</code></td>
+                    <td>Ghi nhận sự kiện chạm ban đầu, return true để tiếp tục nhận gesture</td>
+                </tr>
+                <tr>
+                    <td><code>onFling(MotionEvent, MotionEvent, float, float)</code></td>
+                    <td>Xử lý vuốt: tính hướng và gọi changeDirection()</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- MenuActivity -->
+        <div class="class-card">
+            <h2>2. MenuActivity</h2>
+            <p><strong>Package:</strong> <code>com.example.btl_snake_game.ui</code></p>
+            <p><strong>Extends:</strong> <code>AppCompatActivity</code></p>
+            <p><strong>Mục đích:</strong> Màn hình menu chính với các nút Play, Settings, Exit.</p>
+
+            <h3>🔄 Luồng Hoạt Động</h3>
+            <div class="workflow">
+                <div class="workflow-step"><span class="step-num">1</span><code>onCreate()</code>: Khởi tạo UI, ẩn
+                    system bars, load assets</div>
+                <div class="workflow-step"><span class="step-num">2</span><code>initViews()</code>: Bind views từ XML
+                    layout</div>
+                <div class="workflow-step"><span class="step-num">3</span><code>initAssetManager()</code>: Load tất cả
+                    assets (images, fonts)</div>
+                <div class="workflow-step"><span class="step-num">4</span><code>applyAssets()</code>: Áp dụng assets vào
+                    UI components</div>
+                <div class="workflow-step"><span class="step-num">5</span><code>onResume()</code>: Cập nhật high score,
+                    phát nhạc menu</div>
+                <div class="workflow-step"><span class="step-num">6</span>User click nút → Navigate đến Activity tương
+                    ứng</div>
+            </div>
+
+            <h3>📊 Biến</h3>
+            <table>
+                <tr>
+                    <th>Tên</th>
+                    <th>Kiểu</th>
+                    <th>Mô tả</th>
+                </tr>
+                <tr>
+                    <td><code>rootLayout</code></td>
+                    <td class="type">ConstraintLayout</td>
+                    <td>Layout gốc chứa background</td>
+                </tr>
+                <tr>
+                    <td><code>ivLogo</code></td>
+                    <td class="type">ImageView</td>
+                    <td>Hiển thị logo rắn</td>
+                </tr>
+                <tr>
+                    <td><code>tvGameTitle</code></td>
+                    <td class="type">TextView</td>
+                    <td>Tiêu đề game</td>
+                </tr>
+                <tr>
+                    <td><code>tvHighScore</code></td>
+                    <td class="type">TextView</td>
+                    <td>Điểm cao nhất</td>
+                </tr>
+                <tr>
+                    <td><code>btnPlay/Settings/Exit</code></td>
+                    <td class="type">Button</td>
+                    <td>Các nút điều hướng</td>
+                </tr>
+                <tr>
+                    <td><code>assetManager</code></td>
+                    <td class="type">AssetManager</td>
+                    <td>Quản lý load assets</td>
+                </tr>
+            </table>
+
+            <h3>⚙️ Hàm</h3>
+            <table>
+                <tr>
+                    <th>Hàm</th>
+                    <th>Mô tả</th>
+                </tr>
+                <tr>
+                    <td><code>onCreate(Bundle)</code></td>
+                    <td>Lifecycle - khởi tạo Activity</td>
+                </tr>
+                <tr>
+                    <td><code>onResume()</code></td>
+                    <td>Lifecycle - cập nhật UI và phát nhạc</td>
+                </tr>
+                <tr>
+                    <td><code>onPause()</code></td>
+                    <td>Lifecycle - tạm dừng âm thanh</td>
+                </tr>
+                <tr>
+                    <td><code>hideSystemUI()</code></td>
+                    <td>Ẩn status bar và navigation bar</td>
+                </tr>
+                <tr>
+                    <td><code>initViews()</code></td>
+                    <td>Bind các view từ layout XML</td>
+                </tr>
+                <tr>
+                    <td><code>initAssetManager()</code></td>
+                    <td>Khởi tạo và load tất cả assets</td>
+                </tr>
+                <tr>
+                    <td><code>applyAssets()</code></td>
+                    <td>Áp dụng fonts, backgrounds vào views</td>
+                </tr>
+                <tr>
+                    <td><code>updateHighScore()</code></td>
+                    <td>Lấy và hiển thị điểm cao từ SharedPrefs</td>
+                </tr>
+                <tr>
+                    <td><code>setupClickListeners()</code></td>
+                    <td>Gắn click listeners cho các nút</td>
+                </tr>
+                <tr>
+                    <td><code>navigateToGame()</code></td>
+                    <td>Mở GameActivity</td>
+                </tr>
+                <tr>
+                    <td><code>navigateToSettings()</code></td>
+                    <td>Mở SettingActivity</td>
+                </tr>
+                <tr>
+                    <td><code>exitApp()</code></td>
+                    <td>Đóng toàn bộ ứng dụng</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- SettingActivity -->
+        <div class="class-card">
+            <h2>3. SettingActivity</h2>
+            <p><strong>Package:</strong> <code>com.example.btl_snake_game.ui</code></p>
+            <p><strong>Extends:</strong> <code>AppCompatActivity</code></p>
+            <p><strong>Mục đích:</strong> Màn hình cài đặt cho difficulty và màu rắn.</p>
+
+            <h3>🔄 Luồng Hoạt Động</h3>
+            <div class="workflow">
+                <div class="workflow-step"><span class="step-num">1</span><code>onCreate()</code>: Khởi tạo UI và
+                    managers</div>
+                <div class="workflow-step"><span class="step-num">2</span><code>loadSettings()</code>: Đọc settings từ
+                    SharedPreferences</div>
+                <div class="workflow-step"><span class="step-num">3</span>Hiển thị radio buttons với giá trị hiện tại
+                </div>
+                <div class="workflow-step"><span class="step-num">4</span>User thay đổi →
+                    <code>OnCheckedChangeListener</code> được gọi</div>
+                <div class="workflow-step"><span class="step-num">5</span>Lưu giá trị mới vào SettingManager</div>
+            </div>
+
+            <h3>📊 Biến</h3>
+            <table>
+                <tr>
+                    <th>Tên</th>
+                    <th>Kiểu</th>
+                    <th>Mô tả</th>
+                </tr>
+                <tr>
+                    <td><code>rgDifficulty</code></td>
+                    <td class="type">RadioGroup</td>
+                    <td>Nhóm radio cho độ khó</td>
+                </tr>
+                <tr>
+                    <td><code>rgSnakeColor</code></td>
+                    <td class="type">RadioGroup</td>
+                    <td>Nhóm radio cho màu rắn</td>
+                </tr>
+                <tr>
+                    <td><code>rbEasy/rbHard</code></td>
+                    <td class="type">RadioButton</td>
+                    <td>Lựa chọn độ khó</td>
+                </tr>
+                <tr>
+                    <td><code>rbBlue/Green/Purple</code></td>
+                    <td class="type">RadioButton</td>
+                    <td>Lựa chọn màu</td>
+                </tr>
+                <tr>
+                    <td><code>settingManager</code></td>
+                    <td class="type">SettingManager</td>
+                    <td>Singleton quản lý preferences</td>
+                </tr>
+                <tr>
+                    <td><code>DIFFICULTY_EASY/HARD</code></td>
+                    <td class="type">int (0/1)</td>
+                    <td>Hằng số độ khó</td>
+                </tr>
+            </table>
+
+            <h3>⚙️ Hàm</h3>
+            <table>
+                <tr>
+                    <th>Hàm</th>
+                    <th>Mô tả</th>
+                </tr>
+                <tr>
+                    <td><code>loadSettings()</code></td>
+                    <td>Đọc và hiển thị settings hiện tại</td>
+                </tr>
+                <tr>
+                    <td><code>setupClickListeners()</code></td>
+                    <td>Gắn listeners cho radio groups</td>
+                </tr>
+                <tr>
+                    <td><code>saveDifficulty(int)</code></td>
+                    <td>Lưu độ khó vào SharedPreferences</td>
+                </tr>
+                <tr>
+                    <td><code>getDifficulty()</code></td>
+                    <td>Lấy độ khó hiện tại</td>
+                </tr>
+                <tr>
+                    <td><code>navigateBack()</code></td>
+                    <td>Quay về menu</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- AssetManager -->
+        <div class="class-card">
+            <h2>4. AssetManager</h2>
+            <p><strong>Package:</strong> <code>com.example.btl_snake_game.util</code></p>
+            <p><strong>Mục đích:</strong> Load và quản lý tất cả assets (hình ảnh, fonts) từ thư mục assets.</p>
+
+            <h3>🔄 Luồng Hoạt Động</h3>
+            <div class="workflow">
+                <div class="workflow-step"><span class="step-num">1</span>Khởi tạo với Context</div>
+                <div class="workflow-step"><span class="step-num">2</span><code>loadAllAssets()</code>: Load tất cả
+                    bitmaps và fonts</div>
+                <div class="workflow-step"><span class="step-num">3</span><code>loadSnakeAssetsByColor()</code>: Load
+                    head/body theo màu được chọn</div>
+                <div class="workflow-step"><span class="step-num">4</span>Assets được lưu vào static fields để truy cập
+                    từ mọi nơi</div>
+            </div>
+
+            <h3>📊 Biến Static</h3>
+            <table>
+                <tr>
+                    <th>Tên</th>
+                    <th>Kiểu</th>
+                    <th>Mô tả</th>
+                </tr>
+                <tr>
+                    <td><code>snakeHead/Body</code></td>
+                    <td class="type">Bitmap</td>
+                    <td>Hình ảnh đầu/thân rắn</td>
+                </tr>
+                <tr>
+                    <td><code>food</code></td>
+                    <td class="type">Bitmap</td>
+                    <td>Hình ảnh thức ăn</td>
+                </tr>
+                <tr>
+                    <td><code>button</code></td>
+                    <td class="type">Bitmap</td>
+                    <td>Background cho buttons</td>
+                </tr>
+                <tr>
+                    <td><code>gameBackground</code></td>
+                    <td class="type">Bitmap</td>
+                    <td>Nền màn chơi</td>
+                </tr>
+                <tr>
+                    <td><code>menuBackground</code></td>
+                    <td class="type">Bitmap</td>
+                    <td>Nền menu</td>
+                </tr>
+                <tr>
+                    <td><code>pauseIcon/volumeIcon/muteIcon</code></td>
+                    <td class="type">Bitmap</td>
+                    <td>Icons điều khiển</td>
+                </tr>
+                <tr>
+                    <td><code>gameFont</code></td>
+                    <td class="type">Typeface</td>
+                    <td>Font custom cho game</td>
+                </tr>
+            </table>
+
+            <h3>⚙️ Hàm</h3>
+            <table>
+                <tr>
+                    <th>Hàm</th>
+                    <th>Mô tả</th>
+                </tr>
+                <tr>
+                    <td><code>loadBitmap(String)</code></td>
+                    <td>Load 1 bitmap từ assets/images/</td>
+                </tr>
+                <tr>
+                    <td><code>loadFont(String)</code></td>
+                    <td>Load 1 typeface từ assets/fonts/</td>
+                </tr>
+                <tr>
+                    <td><code>loadAllAssets()</code></td>
+                    <td>Load tất cả assets cần thiết</td>
+                </tr>
+                <tr>
+                    <td><code>loadSnakeAssetsByColor(int)</code></td>
+                    <td>Load snake assets theo màu (blue/green/purple)</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- SettingManager -->
+        <div class="class-card">
+            <h2>5. SettingManager</h2>
+            <p><strong>Package:</strong> <code>com.example.btl_snake_game.util</code></p>
+            <p><strong>Pattern:</strong> Singleton</p>
+            <p><strong>Mục đích:</strong> Quản lý lưu trữ và truy xuất cài đặt người dùng qua SharedPreferences.</p>
+
+            <h3>🔄 Luồng Hoạt Động</h3>
+            <div class="workflow">
+                <div class="workflow-step"><span class="step-num">1</span><code>getInstance()</code>: Lấy singleton
+                    instance</div>
+                <div class="workflow-step"><span class="step-num">2</span><code>init(Context)</code>: Khởi tạo
+                    SharedPreferences</div>
+                <div class="workflow-step"><span class="step-num">3</span>Getter/Setter methods để đọc/ghi preferences
+                </div>
+            </div>
+
+            <h3>📊 Biến</h3>
+            <table>
+                <tr>
+                    <th>Tên</th>
+                    <th>Kiểu</th>
+                    <th>Mô tả</th>
+                </tr>
+                <tr>
+                    <td><code>instance</code></td>
+                    <td class="type">SettingManager</td>
+                    <td>Singleton instance</td>
+                </tr>
+                <tr>
+                    <td><code>prefs</code></td>
+                    <td class="type">SharedPreferences</td>
+                    <td>Đối tượng lưu trữ</td>
+                </tr>
+                <tr>
+                    <td><code>PREF_NAME</code></td>
+                    <td class="type">String</td>
+                    <td>"SnakeGamePrefs"</td>
+                </tr>
+                <tr>
+                    <td><code>DIFFICULTY_EASY/HARD</code></td>
+                    <td class="type">int</td>
+                    <td>0 / 1</td>
+                </tr>
+                <tr>
+                    <td><code>COLOR_BLUE/GREEN/PURPLE</code></td>
+                    <td class="type">int</td>
+                    <td>0 / 1 / 2</td>
+                </tr>
+            </table>
+
+            <h3>⚙️ Hàm</h3>
+            <table>
+                <tr>
+                    <th>Hàm</th>
+                    <th>Mô tả</th>
+                </tr>
+                <tr>
+                    <td><code>getInstance()</code></td>
+                    <td>Trả về singleton instance</td>
+                </tr>
+                <tr>
+                    <td><code>init(Context)</code></td>
+                    <td>Khởi tạo SharedPreferences</td>
+                </tr>
+                <tr>
+                    <td><code>saveHighScore(int)</code></td>
+                    <td>Lưu điểm cao</td>
+                </tr>
+                <tr>
+                    <td><code>getHighScore()</code></td>
+                    <td>Lấy điểm cao</td>
+                </tr>
+                <tr>
+                    <td><code>setSoundEnabled(boolean)</code></td>
+                    <td>Bật/tắt âm thanh</td>
+                </tr>
+                <tr>
+                    <td><code>isSoundEnabled()</code></td>
+                    <td>Kiểm tra trạng thái âm thanh</td>
+                </tr>
+                <tr>
+                    <td><code>setDifficulty(int)</code></td>
+                    <td>Lưu độ khó</td>
+                </tr>
+                <tr>
+                    <td><code>getDifficulty()</code></td>
+                    <td>Lấy độ khó</td>
+                </tr>
+                <tr>
+                    <td><code>isHardMode()</code></td>
+                    <td>Kiểm tra chế độ khó</td>
+                </tr>
+                <tr>
+                    <td><code>setSnakeColor(int)</code></td>
+                    <td>Lưu màu rắn</td>
+                </tr>
+                <tr>
+                    <td><code>getSnakeColor()</code></td>
+                    <td>Lấy màu rắn</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- SoundManager -->
+        <div class="class-card">
+            <h2>6. SoundManager</h2>
+            <p><strong>Package:</strong> <code>com.example.btl_snake_game.util</code></p>
+            <p><strong>Pattern:</strong> Singleton</p>
+            <p><strong>Mục đích:</strong> Quản lý phát nhạc nền (MediaPlayer) và hiệu ứng âm thanh (SoundPool).</p>
+
+            <h3>🔄 Luồng Hoạt Động</h3>
+            <div class="workflow">
+                <div class="workflow-step"><span class="step-num">1</span><code>init(Context)</code>: Khởi tạo SoundPool
+                    và load sound effects</div>
+                <div class="workflow-step"><span class="step-num">2</span><code>playMenuMusic()</code>: Dừng game music,
+                    phát menu music</div>
+                <div class="workflow-step"><span class="step-num">3</span><code>playGameMusic()</code>: Dừng menu music,
+                    phát game music</div>
+                <div class="workflow-step"><span class="step-num">4</span><code>playEatSound()/playDieSound()</code>:
+                    Phát SFX qua SoundPool</div>
+                <div class="workflow-step"><span class="step-num">5</span><code>release()</code>: Giải phóng tài nguyên
+                    khi kết thúc</div>
+            </div>
+
+            <h3>📊 Biến</h3>
+            <table>
+                <tr>
+                    <th>Tên</th>
+                    <th>Kiểu</th>
+                    <th>Mô tả</th>
+                </tr>
+                <tr>
+                    <td><code>instance</code></td>
+                    <td class="type">SoundManager</td>
+                    <td>Singleton instance</td>
+                </tr>
+                <tr>
+                    <td><code>menuMusicPlayer</code></td>
+                    <td class="type">MediaPlayer</td>
+                    <td>Player cho nhạc menu</td>
+                </tr>
+                <tr>
+                    <td><code>gameMusicPlayer</code></td>
+                    <td class="type">MediaPlayer</td>
+                    <td>Player cho nhạc game</td>
+                </tr>
+                <tr>
+                    <td><code>soundPool</code></td>
+                    <td class="type">SoundPool</td>
+                    <td>Pool cho sound effects</td>
+                </tr>
+                <tr>
+                    <td><code>sfxEatId/sfxDieId</code></td>
+                    <td class="type">int</td>
+                    <td>ID của sound effects đã load</td>
+                </tr>
+                <tr>
+                    <td><code>sfxLoaded</code></td>
+                    <td class="type">boolean</td>
+                    <td>Trạng thái load SFX</td>
+                </tr>
+            </table>
+
+            <h3>⚙️ Hàm</h3>
+            <table>
+                <tr>
+                    <th>Hàm</th>
+                    <th>Mô tả</th>
+                </tr>
+                <tr>
+                    <td><code>getInstance()</code></td>
+                    <td>Trả về singleton instance</td>
+                </tr>
+                <tr>
+                    <td><code>init(Context)</code></td>
+                    <td>Khởi tạo SoundPool và load SFX</td>
+                </tr>
+                <tr>
+                    <td><code>playMenuMusic()</code></td>
+                    <td>Phát nhạc menu (loop)</td>
+                </tr>
+                <tr>
+                    <td><code>stopMenuMusic()</code></td>
+                    <td>Dừng nhạc menu</td>
+                </tr>
+                <tr>
+                    <td><code>playGameMusic()</code></td>
+                    <td>Phát nhạc game (loop)</td>
+                </tr>
+                <tr>
+                    <td><code>stopGameMusic()</code></td>
+                    <td>Dừng nhạc game</td>
+                </tr>
+                <tr>
+                    <td><code>playEatSound()</code></td>
+                    <td>Phát SFX khi ăn thức ăn</td>
+                </tr>
+                <tr>
+                    <td><code>playDieSound()</code></td>
+                    <td>Phát SFX khi chết</td>
+                </tr>
+                <tr>
+                    <td><code>pauseAll()</code></td>
+                    <td>Tạm dừng tất cả âm thanh</td>
+                </tr>
+                <tr>
+                    <td><code>resumeMusic(boolean)</code></td>
+                    <td>Tiếp tục phát nhạc (menu hoặc game)</td>
+                </tr>
+                <tr>
+                    <td><code>release()</code></td>
+                    <td>Giải phóng MediaPlayer và SoundPool</td>
+                </tr>
+                <tr>
+                    <td><code>toggleSound(boolean)</code></td>
+                    <td>Bật/tắt âm thanh</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Vector2D -->
+        <div class="class-card">
+            <h2>7. Vector2D</h2>
+            <p><strong>Package:</strong> <code>com.example.btl_snake_game.util</code></p>
+            <p><strong>Mục đích:</strong> Biểu diễn tọa độ 2D (x, y) cho vị trí và hướng di chuyển.</p>
+
+            <h3>🔄 Cách Sử Dụng</h3>
+            <div class="workflow">
+                <div class="workflow-step"><span class="step-num">1</span>Tạo Vector2D với tọa độ x, y</div>
+                <div class="workflow-step"><span class="step-num">2</span>Dùng làm vị trí các segment của rắn</div>
+                <div class="workflow-step"><span class="step-num">3</span>Dùng làm hướng di chuyển (direction)</div>
+                <div class="workflow-step"><span class="step-num">4</span>So sánh vị trí với <code>equals()</code></div>
+            </div>
+
+            <h3>📊 Biến</h3>
+            <table>
+                <tr>
+                    <th>Tên</th>
+                    <th>Kiểu</th>
+                    <th>Mô tả</th>
+                </tr>
+                <tr>
+                    <td><code>x</code></td>
+                    <td class="type">int</td>
+                    <td>Tọa độ x (pixels)</td>
+                </tr>
+                <tr>
+                    <td><code>y</code></td>
+                    <td class="type">int</td>
+                    <td>Tọa độ y (pixels)</td>
+                </tr>
+            </table>
+
+            <h3>⚙️ Hàm</h3>
+            <table>
+                <tr>
+                    <th>Hàm</th>
+                    <th>Mô tả</th>
+                </tr>
+                <tr>
+                    <td><code>Vector2D(int, int)</code></td>
+                    <td>Constructor - tạo vector với x, y</td>
+                </tr>
+                <tr>
+                    <td><code>getX()</code></td>
+                    <td>Lấy giá trị x</td>
+                </tr>
+                <tr>
+                    <td><code>getY()</code></td>
+                    <td>Lấy giá trị y</td>
+                </tr>
+                <tr>
+                    <td><code>setX(int)</code></td>
+                    <td>Đặt giá trị x</td>
+                </tr>
+                <tr>
+                    <td><code>setY(int)</code></td>
+                    <td>Đặt giá trị y</td>
+                </tr>
+                <tr>
+                    <td><code>equals(Object)</code></td>
+                    <td>So sánh 2 vector</td>
+                </tr>
+                <tr>
+                    <td><code>hashCode()</code></td>
+                    <td>Tính hash cho HashMap/HashSet</td>
+                </tr>
+                <tr>
+                    <td><code>toString()</code></td>
+                    <td>Chuyển thành chuỗi "(x, y)"</td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+</body>
+
+</html>

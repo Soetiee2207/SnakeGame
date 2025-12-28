@@ -23,6 +23,15 @@ public class InputHandler extends GestureDetector.SimpleOnGestureListener {
     }
 
     @Override
+    public boolean onSingleTapUp(MotionEvent e) {
+        if (gameEngine.getState() == GameState.MENU) {
+            gameEngine.startGame();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2,
                            float velocityX, float velocityY) {
         if (gameEngine.getState() != GameState.PLAYING) {
